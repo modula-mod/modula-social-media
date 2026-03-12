@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Media Module</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #020617;
+        --surface: rgba(15, 23, 42, 0.84);
+        --surface-2: rgba(15, 23, 42, 0.94);
+        --surface-3: rgba(30, 41, 59, 0.84);
+        --border: rgba(148, 163, 184, 0.18);
+        --text: #e5eef9;
+        --muted: rgba(226, 232, 240, 0.68);
+        --accent: #3b82f6;
+        --accent-soft: rgba(59, 130, 246, 0.18);
+        --positive: #22c55e;
+        --shadow: 0 26px 80px rgba(2, 6, 23, 0.34);
+      }
+
+      :root[data-theme='light'] {
+        color-scheme: light;
+        --bg: #f8fafc;
+        --surface: rgba(255, 255, 255, 0.94);
+        --surface-2: rgba(255, 255, 255, 0.98);
+        --surface-3: rgba(241, 245, 249, 0.98);
+        --border: rgba(15, 23, 42, 0.08);
+        --text: #0f172a;
+        --muted: rgba(51, 65, 85, 0.72);
+        --accent: #2563eb;
+        --accent-soft: rgba(37, 99, 235, 0.12);
+        --positive: #16a34a;
+        --shadow: 0 20px 64px rgba(15, 23, 42, 0.12);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+      body { padding: 24px; }
+      .app {
+        min-height: calc(100vh - 48px);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 20px;
+      }
+      .panel {
+        background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, white 8%), var(--surface-2));
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(22px);
+        background: color-mix(in srgb, var(--surface-2) 90%, transparent 10%);
+        border-bottom: 1px solid var(--border);
+      }
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 20px 14px;
+      }
+      .eyebrow {
+        margin: 0 0 4px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.24em;
+        color: var(--muted);
+      }
+      .title {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 700;
+      }
+      .subtitle {
+        margin: 6px 0 0;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .primary-btn {
+        border: 0;
+        border-radius: 999px;
+        background: var(--accent);
+        color: white;
+        padding: 11px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 14px 32px color-mix(in srgb, var(--accent) 28%, transparent 72%);
+      }
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid var(--border);
+      }
+      .tab {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font: inherit;
+        padding: 14px 16px;
+        cursor: pointer;
+        position: relative;
+      }
+      .tab.active { color: var(--text); font-weight: 600; }
+      .tab.active::after {
+        content: '';
+        position: absolute;
+        left: 50%; bottom: 0;
+        width: 46px; height: 3px;
+        transform: translateX(-50%);
+        border-radius: 999px;
+        background: var(--accent);
+      }
+      .composer {
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .composer textarea {
+        width: 100%;
+        min-height: 110px;
+        resize: vertical;
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        font-size: 18px;
+        outline: none;
+      }
+      .composer textarea::placeholder { color: var(--muted); }
+      .composer-actions {
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
+      }
+      .ghost-row { display: flex; gap: 10px; }
+      .ghost {
+        width: 38px; height: 38px; border-radius: 999px;
+        border: 1px solid var(--border); background: var(--accent-soft); color: var(--accent);
+        display: grid; place-items: center; font-size: 14px;
+      }
+      .feed { display: grid; }
+      .post {
+        display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 14px;
+        padding: 20px; border-bottom: 1px solid var(--border);
+      }
+      .avatar {
+        width: 48px; height: 48px; border-radius: 999px;
+        background: radial-gradient(circle at 28% 28%, rgba(255,255,255,0.3), transparent 30%), linear-gradient(135deg, #1d4ed8, #7c3aed 55%, #0f172a);
+        display: grid; place-items: center; font-size: 14px; font-weight: 700;
+      }
+      .meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 14px; }
+      .meta strong { font-size: 15px; }
+      .handle, .time, .copy { color: var(--muted); }
+      .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+      .tag { color: var(--accent); font-size: 13px; }
+      .media {
+        margin-top: 14px;
+        min-height: 180px;
+        border-radius: 22px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 30%, transparent 70%), transparent 52%), linear-gradient(160deg, var(--surface-3), var(--surface-2));
+      }
+      .poll { display: grid; gap: 10px; margin-top: 14px; }
+      .poll button {
+        position: relative; overflow: hidden; border-radius: 18px; border: 1px solid var(--border);
+        background: var(--surface-3); color: var(--text); padding: 14px 16px; text-align: left; cursor: pointer;
+      }
+      .poll .fill {
+        position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--accent) 18%, transparent 82%);
+      }
+      .poll .label { position: relative; display: flex; justify-content: space-between; gap: 12px; }
+      .actions { display: flex; justify-content: space-between; margin-top: 16px; color: var(--muted); }
+      .action {
+        appearance: none; border: 0; background: transparent; color: inherit; display: inline-flex; align-items: center; gap: 6px;
+        padding: 8px 10px; border-radius: 999px; cursor: pointer;
+      }
+      .action:hover { background: var(--accent-soft); color: var(--accent); }
+      .side { display: grid; gap: 16px; align-self: start; }
+      .side-card { padding: 18px; }
+      .side h3 { margin: 0 0 12px; font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+      .stat-grid { display: grid; gap: 12px; }
+      .stat {
+        border-radius: 18px; border: 1px solid var(--border); background: var(--surface-3);
+        padding: 14px 16px;
+      }
+      .stat small, .who p { display: block; color: var(--muted); }
+      .stat strong { display: block; margin-top: 6px; font-size: 24px; }
+      .who { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--border); }
+      .who:first-of-type { border-top: 0; padding-top: 0; }
+      .chip {
+        display: inline-flex; align-items: center; justify-content: center;
+        min-width: 74px; padding: 9px 12px; border-radius: 999px; border: 1px solid var(--border);
+        background: var(--surface-3); color: var(--text); font-size: 13px; font-weight: 600;
+      }
+      .module-badge {
+        display: inline-flex; align-items: center; gap: 8px; margin-top: 12px;
+        padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-3); color: var(--muted);
+        font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+      }
+      @media (max-width: 980px) {
+        body { padding: 12px; }
+        .app { grid-template-columns: 1fr; }
+        .side { order: -1; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <main class="panel">
+        <header class="header">
+          <div class="header-inner">
+            <div>
+              <p class="eyebrow">Modula Marketplace Module</p>
+              <h1 class="title">Social</h1>
+              <p class="subtitle">Installed from Marketplace and running inside the runtime sandbox.</p>
+              <div class="module-badge">social-media · v1.0.0</div>
+            </div>
+            <button class="primary-btn" id="compose-toggle">New Post</button>
+          </div>
+          <div class="tabs">
+            <button class="tab active" data-filter="all">For You</button>
+            <button class="tab" data-filter="following">Following</button>
+            <button class="tab" data-filter="trending">Trending</button>
+          </div>
+        </header>
+
+        <section class="composer" id="composer" hidden>
+          <textarea id="composer-input" placeholder="What's happening?"></textarea>
+          <div class="composer-actions">
+            <div class="ghost-row">
+              <div class="ghost">+</div>
+              <div class="ghost">#</div>
+              <div class="ghost">?</div>
+            </div>
+            <button class="primary-btn" id="publish">Publish</button>
+          </div>
+        </section>
+
+        <section class="feed" id="feed"></section>
+      </main>
+
+      <aside class="side">
+        <section class="panel side-card">
+          <h3>Pulse</h3>
+          <div class="stat-grid">
+            <div class="stat"><small>Followers</small><strong>2.1k</strong></div>
+            <div class="stat"><small>Posts</small><strong>184</strong></div>
+          </div>
+        </section>
+
+        <section class="panel side-card">
+          <h3>Suggested</h3>
+          <div class="who"><div><strong>Jane Doe</strong><p>Design systems · @jane</p></div><span class="chip">Follow</span></div>
+          <div class="who"><div><strong>AI Researcher</strong><p>Composable AI · @airesearcher</p></div><span class="chip">Following</span></div>
+          <div class="who"><div><strong>Crypto King</strong><p>Signals and memetics · @cryptoking</p></div><span class="chip">Follow</span></div>
+        </section>
+      </aside>
+    </div>
+
+    <script>
+      const state = {
+        theme: 'dark',
+        filter: 'all',
+        posts: [
+          {
+            id: '1', author: 'Jane Doe', handle: '@jane', time: '18m', verified: true,
+            content: 'Social is now a real Marketplace module. Submit, install, update, rollback — the whole lifecycle is live.',
+            tags: ['modula', 'marketplace', 'social'], likes: 186, reposts: 24, comments: 31
+          },
+          {
+            id: '2', author: 'Andrei Milea', handle: '@andrei.milea', time: '53m', verified: true,
+            content: 'This bundle is running from /var/modula/marketplace through the ui-runtime sandbox host, not from the builtin registry.',
+            tags: ['runtime', 'sandbox'], likes: 94, reposts: 12, comments: 16, media: true
+          },
+          {
+            id: '3', author: 'AI Researcher', handle: '@airesearcher', time: '2h', verified: true,
+            content: 'Which module should ship next after Social?',
+            tags: ['builder', 'ecosystem'], likes: 122, reposts: 18, comments: 45,
+            poll: [
+              { text: 'Commerce', percent: 42 },
+              { text: 'Teams', percent: 33 },
+              { text: 'Media', percent: 25 }
+            ]
+          }
+        ]
+      };
+
+      const feed = document.getElementById('feed');
+      const composer = document.getElementById('composer');
+      const composeToggle = document.getElementById('compose-toggle');
+      const publish = document.getElementById('publish');
+      const composerInput = document.getElementById('composer-input');
+      const tabs = Array.from(document.querySelectorAll('.tab'));
+
+      function render() {
+        document.documentElement.dataset.theme = state.theme;
+        feed.innerHTML = state.posts.map((post) => `
+          <article class="post">
+            <div class="avatar">${post.author.split(' ').map((part) => part[0]).slice(0, 2).join('')}</div>
+            <div>
+              <div class="meta">
+                <strong>${post.author}</strong>
+                ${post.verified ? '<span style="color:var(--accent)">●</span>' : ''}
+                <span class="handle">${post.handle}</span>
+                <span class="time">· ${post.time}</span>
+              </div>
+              <p class="copy">${post.content}</p>
+              <div class="tags">${post.tags.map((tag) => `<span class="tag">#${tag}</span>`).join('')}</div>
+              ${post.media ? '<div class="media"></div>' : ''}
+              ${post.poll ? `<div class="poll">${post.poll.map((row) => `<button><span class="fill" style="width:${row.percent}%"></span><span class="label"><span>${row.text}</span><span>${row.percent}%</span></span></button>`).join('')}</div>` : ''}
+              <div class="actions">
+                <button class="action">💬 <span>${post.comments}</span></button>
+                <button class="action">↻ <span>${post.reposts}</span></button>
+                <button class="action">♥ <span>${post.likes}</span></button>
+                <button class="action">🔖</button>
+              </div>
+            </div>
+          </article>
+        `).join('');
+      }
+
+      composeToggle.addEventListener('click', () => {
+        composer.hidden = !composer.hidden;
+      });
+
+      publish.addEventListener('click', () => {
+        const content = composerInput.value.trim();
+        if (!content) return;
+        state.posts.unshift({
+          id: String(Date.now()),
+          author: 'You',
+          handle: '@you',
+          time: 'now',
+          verified: false,
+          content,
+          tags: ['draft'],
+          likes: 0,
+          reposts: 0,
+          comments: 0
+        });
+        composerInput.value = '';
+        composer.hidden = true;
+        render();
+      });
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          state.filter = tab.dataset.filter || 'all';
+          tabs.forEach((node) => node.classList.toggle('active', node === tab));
+        });
+      });
+
+      window.addEventListener('message', (event) => {
+        if (!event.data || event.data.type !== 'MODULA_THEME_SYNC') return;
+        state.theme = event.data.theme === 'light' ? 'light' : 'dark';
+        if (event.data.colors && typeof event.data.colors === 'object') {
+          const colors = event.data.colors;
+          const accent = colors['--accent-primary'] || colors['--color-gray-900'];
+          if (accent) document.documentElement.style.setProperty('--accent', accent);
+        }
+        render();
+      });
+
+      render();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,85 @@
+{
+  "id": "social-media",
+  "slug": "social-media",
+  "name": "Social Media",
+  "namespace": "modula.social",
+  "version": "1.0.0",
+  "class": "hybrid",
+  "placements": [
+    "sidebar",
+    "standalone_page",
+    "board_widget"
+  ],
+  "runtime": "sandbox",
+  "runtime_renderer": "social_host",
+  "bundle_entry": "index.html",
+  "entry_points": {
+    "frontend": "index.html",
+    "backend": "backend/router.py",
+    "settings": "frontend/routes/settings/+page.svelte"
+  },
+  "route": "/social",
+  "routes": [
+    { "path": "/social", "kind": "surface", "label": "Social" }
+  ],
+  "replaces": ["social"],
+  "launcher": {
+    "name": "Social",
+    "icon": "icon.svg",
+    "show_in_sidebar": true,
+    "show_in_dock": false
+  },
+  "profile_tab": {
+    "title": "Social",
+    "runtime": "sandbox"
+  },
+  "sandbox_flags": [
+    "allow-scripts",
+    "allow-forms"
+  ],
+  "permissions": [
+    "profile.read",
+    "post.create"
+  ],
+  "capabilities": [
+    "feed.read",
+    "widget.render",
+    "search.index"
+  ],
+  "dependencies": {
+    "required": [],
+    "optional": ["notifications", "profile"]
+  },
+  "widgets": [
+    "social-feed",
+    "social-post"
+  ],
+  "components": [
+    "feed-card",
+    "composer-card"
+  ],
+  "settings": {
+    "entry": "frontend/routes/settings/+page.svelte"
+  },
+  "search": {
+    "provider": "social-feed"
+  },
+  "events": [
+    "social.feed.updated"
+  ],
+  "compatibility": {
+    "modula_core": ">=1.0.0",
+    "api_version": "1"
+  },
+  "update_channel": "stable",
+  "hooks": {
+    "install": "backend/install.py",
+    "uninstall": "backend/uninstall.py"
+  },
+  "install_hooks": ["backend/install.py"],
+  "uninstall_hooks": ["backend/uninstall.py"],
+  "source": {
+    "route": "src/routes/social/+page.svelte",
+    "component": "src/components/SocialFeedSurface.svelte"
+  }
+}

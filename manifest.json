@@ -1,0 +1,42 @@
+{
+  "id": "social-media",
+  "slug": "social-media",
+  "name": "Social Media",
+  "subtitle": "Board-aware hybrid social surface for Modula",
+  "description": "Unified social feed module for Modula with posting, follows, polls, and trending signals.",
+  "version": "1.0.0",
+  "type": "module",
+  "entry": "module.json",
+  "icon": "icon.svg",
+  "publisher": "modula",
+  "category": "core",
+  "repository": "https://github.com/modula-mod/modula-social-media",
+  "assets": {
+    "icon": "icon.svg",
+    "cover": "cover.png"
+  },
+  "support": {
+    "docs": "./docs",
+    "issues": "https://github.com/modula-mod/modula-social-media/issues"
+  },
+  "release": {
+    "current": "1.0.0",
+    "channel": "stable"
+  },
+  "compatibility": {
+    "modula_core": ">=1.0.0",
+    "api_version": "1"
+  },
+  "permissions": [
+    "module:social:read",
+    "module:social:write"
+  ],
+  "risk_tier": "A",
+  "tags": [
+    "social",
+    "feed",
+    "community",
+    "profile",
+    "board"
+  ]
+}

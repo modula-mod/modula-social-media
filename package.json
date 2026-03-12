@@ -1,0 +1,10 @@
+{
+  "name": "modula-social-media",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Social Media module for the Modula marketplace",
+  "scripts": {
+    "validate": "node scripts/validate-module.mjs",
+    "pack": "node scripts/pack-module.mjs"
+  }
+}

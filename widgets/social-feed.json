@@ -1,0 +1,24 @@
+{
+  "id": "social-feed",
+  "title": "Social Feed",
+  "description": "Scrollable social timeline with post composer, media cards, and reactions.",
+  "category": "social",
+  "sizes": ["m", "l", "xl"],
+  "permissions": ["profile.read", "post.create"],
+  "rendererType": "host-component",
+  "settings": {
+    "refreshInterval": {
+      "type": "number",
+      "default": 60
+    },
+    "showComposer": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "component": "src/components/SocialFeedSurface.svelte",
+  "fallback": {
+    "type": "empty-state",
+    "message": "No social feed data available"
+  }
+}

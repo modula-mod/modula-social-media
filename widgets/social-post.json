@@ -1,0 +1,20 @@
+{
+  "id": "social-post",
+  "title": "Social Post",
+  "description": "Single post card contract for feed, profile, and embed surfaces.",
+  "category": "social",
+  "sizes": ["s", "m", "l"],
+  "permissions": ["profile.read"],
+  "rendererType": "feed-card",
+  "settings": {
+    "compact": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "component": "src/components/SocialFeedSurface.svelte",
+  "fallback": {
+    "type": "empty-state",
+    "message": "No post available"
+  }
+}
