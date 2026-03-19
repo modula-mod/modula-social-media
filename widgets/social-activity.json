@@ -1,0 +1,20 @@
+{
+  "id": "social-activity",
+  "title": "Social Activity",
+  "description": "Recent identity-linked Social activity for Board and profile surfaces.",
+  "category": "social",
+  "sizes": ["s", "m", "l"],
+  "permissions": ["profile.read"],
+  "rendererType": "host-component",
+  "settings": {
+    "refreshInterval": {
+      "type": "number",
+      "default": 120
+    }
+  },
+  "component": "src/components/SocialFeedSurface.svelte",
+  "fallback": {
+    "type": "empty-state",
+    "message": "No social activity available"
+  }
+}

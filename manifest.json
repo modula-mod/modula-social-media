@@ -2,9 +2,9 @@
   "id": "social-media",
   "slug": "social-media",
   "name": "Social Media",
-  "subtitle": "Board-aware hybrid social surface for Modula",
-  "description": "Unified social feed module for Modula with posting, follows, polls, and trending signals.",
-  "version": "1.0.0",
+  "subtitle": "Identity-native flagship social module for Modula",
+  "description": "Unified social feed module for Modula with a real feed, composer, comments, reactions, activity, widgets, and plugin extension points.",
+  "version": "1.1.0",
   "type": "module",
   "entry": "module.json",
   "icon": "icon.svg",
@@ -20,7 +20,7 @@
     "issues": "https://github.com/modula-mod/modula-social-media/issues"
   },
   "release": {
-    "current": "1.0.0",
+    "current": "1.1.0",
     "channel": "stable"
   },
   "compatibility": {

@@ -3,7 +3,8 @@
   "slug": "social-media",
   "name": "Social Media",
   "namespace": "modula.social",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "package_kind": "module",
   "class": "hybrid",
   "placements": [
     "sidebar",
@@ -20,9 +21,87 @@
   },
   "route": "/social",
   "routes": [
-    { "path": "/social", "kind": "surface", "label": "Social" }
+    {
+      "path": "/social",
+      "kind": "surface",
+      "label": "Social"
+    }
   ],
-  "replaces": ["social"],
+  "surfaces": [
+    {
+      "type": "sidebar_page",
+      "id": "social-feed",
+      "title": "Feed",
+      "route": "/social"
+    },
+    {
+      "type": "sidebar_page",
+      "id": "messages",
+      "title": "Messages",
+      "route": "/social/messages"
+    },
+    {
+      "type": "sidebar_page",
+      "id": "social-explore",
+      "title": "Explore",
+      "route": "/social/explore"
+    },
+    {
+      "type": "sidebar_page",
+      "id": "social-notifications",
+      "title": "Notifications",
+      "route": "/social/notifications"
+    },
+    {
+      "type": "standalone_page",
+      "id": "social-home",
+      "title": "Social",
+      "route": "/social"
+    },
+    {
+      "type": "standalone_page",
+      "id": "social-explore-home",
+      "title": "Explore",
+      "route": "/social/explore"
+    },
+    {
+      "type": "standalone_page",
+      "id": "social-notifications-home",
+      "title": "Notifications",
+      "route": "/social/notifications"
+    },
+    {
+      "type": "profile_tab",
+      "id": "social-profile",
+      "title": "Social",
+      "route": "/social"
+    }
+  ],
+  "extension_slots": [
+    {
+      "id": "social.nav.secondary",
+      "kind": "nav-item"
+    },
+    {
+      "id": "social.profile.media",
+      "kind": "media-surface"
+    },
+    {
+      "id": "social.board.widgets",
+      "kind": "widget-provider"
+    },
+    {
+      "id": "social.feed.card.actions",
+      "kind": "action-provider"
+    },
+    {
+      "id": "social.settings.integrations",
+      "kind": "settings-panel"
+    }
+  ],
+  "replaces": [
+    "social"
+  ],
   "launcher": {
     "name": "Social",
     "icon": "icon.svg",
@@ -39,7 +118,9 @@
   ],
   "permissions": [
     "profile.read",
-    "post.create"
+    "post.create",
+    "comment.create",
+    "reaction.create"
   ],
   "capabilities": [
     "feed.read",
@@ -48,11 +129,15 @@
   ],
   "dependencies": {
     "required": [],
-    "optional": ["notifications", "profile"]
+    "optional": [
+      "notifications",
+      "profile"
+    ]
   },
   "widgets": [
     "social-feed",
-    "social-post"
+    "social-post",
+    "social-activity"
   ],
   "components": [
     "feed-card",
@@ -76,10 +161,185 @@
     "install": "backend/install.py",
     "uninstall": "backend/uninstall.py"
   },
-  "install_hooks": ["backend/install.py"],
-  "uninstall_hooks": ["backend/uninstall.py"],
+  "install_hooks": [
+    "backend/install.py"
+  ],
+  "uninstall_hooks": [
+    "backend/uninstall.py"
+  ],
   "source": {
     "route": "src/routes/social/+page.svelte",
     "component": "src/components/SocialFeedSurface.svelte"
-  }
+  },
+  "capabilities_provided": [
+    "social.feed.read",
+    "social.post.create",
+    "social.comment.create",
+    "social.reaction.create",
+    "social.activity.read",
+    "social.profile.read",
+    "social.board.widgets",
+    "social.messages.read",
+    "social.nav.secondary",
+    "social.profile.media",
+    "social.feed.card.actions",
+    "social.settings.integrations"
+  ],
+  "capabilities_required": [],
+  "capabilities_optional": [],
+  "services_provided": [
+    {
+      "id": "social.feed.v1",
+      "capability": "social.feed.read",
+      "version": "1.0.0",
+      "permissions_required": [
+        "profile.read"
+      ],
+      "methods": [
+        "getFeed",
+        "getPost",
+        "listProfilePosts"
+      ]
+    },
+    {
+      "id": "social.posts.v1",
+      "capability": "social.post.create",
+      "version": "1.0.0",
+      "permissions_required": [
+        "post.create"
+      ],
+      "methods": [
+        "getPost",
+        "createPost",
+        "addComment",
+        "addReaction"
+      ]
+    },
+    {
+      "id": "social.activity.v1",
+      "capability": "social.activity.read",
+      "version": "1.0.0",
+      "permissions_required": [
+        "profile.read"
+      ],
+      "methods": [
+        "listActivity",
+        "listNotifications"
+      ]
+    },
+    {
+      "id": "social.messages.v1",
+      "capability": "social.messages.read",
+      "version": "1.0.0",
+      "permissions_required": [
+        "profile.read"
+      ],
+      "methods": [
+        "listThreads"
+      ]
+    }
+  ],
+  "services_required": [],
+  "services_optional": [],
+  "events_emitted": [
+    "social.feed.updated",
+    "social.post.created",
+    "social.comment.created",
+    "social.reaction.created"
+  ],
+  "events_listened": [
+    "notifications.send.requested",
+    "board.widget.added"
+  ],
+  "actions_provided": [
+    {
+      "id": "social.post.create",
+      "title": "Create Social Post",
+      "capability": "social.post.create",
+      "service": "social.posts.v1",
+      "permissions_required": [
+        "post.create"
+      ]
+    },
+    {
+      "id": "social.feed.refresh",
+      "title": "Refresh Social Feed",
+      "capability": "social.feed.read",
+      "service": "social.feed.v1",
+      "permissions_required": [
+        "profile.read"
+      ]
+    },
+    {
+      "id": "social.comment.create",
+      "title": "Comment on Social Post",
+      "capability": "social.comment.create",
+      "service": "social.posts.v1",
+      "permissions_required": [
+        "comment.create"
+      ]
+    },
+    {
+      "id": "social.reaction.create",
+      "title": "React to Social Post",
+      "capability": "social.reaction.create",
+      "service": "social.posts.v1",
+      "permissions_required": [
+        "reaction.create"
+      ]
+    }
+  ],
+  "triggers_emitted": [
+    {
+      "id": "social.post.created",
+      "title": "Social Post Created"
+    },
+    {
+      "id": "social.feed.updated",
+      "title": "Social Feed Updated"
+    },
+    {
+      "id": "social.comment.created",
+      "title": "Social Comment Created"
+    },
+    {
+      "id": "social.reaction.created",
+      "title": "Social Reaction Created"
+    }
+  ],
+  "jobs_provided": [
+    {
+      "id": "social.feed.sync",
+      "title": "Sync Social Feed",
+      "schedule_supported": true,
+      "permissions_required": [
+        "profile.read"
+      ]
+    }
+  ],
+  "workflows_provided": [
+    {
+      "id": "social.post.create.notify",
+      "title": "Create Post and Notify",
+      "steps": [
+        "social.post.create",
+        "notifications.send.requested"
+      ]
+    },
+    {
+      "id": "social.comment.create.activity",
+      "title": "Create Comment and Record Activity",
+      "steps": [
+        "social.comment.create"
+      ]
+    },
+    {
+      "id": "social.reaction.create.activity",
+      "title": "Create Reaction and Record Activity",
+      "steps": [
+        "social.reaction.create"
+      ]
+    }
+  ],
+  "agent_roles": []
 }
