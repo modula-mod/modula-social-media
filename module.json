@@ -3,7 +3,7 @@
   "slug": "social-media",
   "name": "Social Media",
   "namespace": "modula.social",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "package_kind": "module",
   "class": "hybrid",
   "placements": [
@@ -25,6 +25,21 @@
       "path": "/social",
       "kind": "surface",
       "label": "Social"
+    },
+    {
+      "path": "/social/messages",
+      "kind": "surface",
+      "label": "Messages"
+    },
+    {
+      "path": "/social/explore",
+      "kind": "surface",
+      "label": "Explore"
+    },
+    {
+      "path": "/social/notifications",
+      "kind": "surface",
+      "label": "Notifications"
     }
   ],
   "surfaces": [
@@ -140,8 +155,15 @@
     "social-activity"
   ],
   "components": [
-    "feed-card",
-    "composer-card"
+    "layout/feed-shell",
+    "composer/feed-composer",
+    "feed/feed-filters",
+    "feed/feed-list",
+    "posts/post-card",
+    "comments/comment-composer",
+    "reactions/reaction-bar",
+    "activity/activity-rail",
+    "widgets/social-widget-preview"
   ],
   "settings": {
     "entry": "frontend/routes/settings/+page.svelte"
@@ -168,8 +190,8 @@
     "backend/uninstall.py"
   ],
   "source": {
-    "route": "src/routes/social/+page.svelte",
-    "component": "src/components/SocialFeedSurface.svelte"
+    "route": "frontend/routes/social/+page.svelte",
+    "component": "frontend/components/feed/FeedSurface.svelte"
   },
   "capabilities_provided": [
     "social.feed.read",

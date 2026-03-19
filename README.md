@@ -1,16 +1,44 @@
 # modula-social-media
 
-First marketplace module for Modula.
+Flagship Social module for Modula.
 
 ## Contents
 
-- `manifest.json`: marketplace submission manifest
-- `module.json`: runtime launcher and sandbox metadata
-- `icon.svg`: module icon
-- `src/routes/social/+page.svelte`: route entry for the social surface
-- `src/components/SocialFeedSurface.svelte`: extracted UI from the built-in `/module/social` feature
-- `src/lib/social-store.ts`: self-contained local state for feed, posts, follows, and polls
-- `widgets/`: starter widget descriptors for feed/post surfaces
+- `manifest.json`: Marketplace submission manifest
+- `module.json`: runtime launcher, service, surface, workflow, and widget metadata
+- `frontend/routes/`: explicit route entries for `social`, `messages`, `explore`, and `notifications`
+- `frontend/components/`: reusable layout, composer, feed, post, comment, reaction, activity, state, and widget components
+- `frontend/stores/`: package-local store exports
+- `frontend/lib/`: route unions and helper utilities
+- `backend/`: install hooks, schemas, service, router, permissions, events, and repository contracts
+- `src/components/SocialFeedSurface.svelte`: compatibility wrapper that now forwards to the structured `frontend/components/feed/FeedSurface.svelte`
+- `src/lib/social-store.ts`: package-local reference state for the componentized sandbox surface
+- `widgets/`: Social feed, post, and activity widget descriptors
+
+## Frontend structure
+
+```text
+frontend/
+├── routes/
+│   ├── social/
+│   ├── messages/
+│   ├── explore/
+│   └── notifications/
+├── components/
+│   ├── layout/
+│   ├── composer/
+│   ├── feed/
+│   ├── posts/
+│   ├── comments/
+│   ├── reactions/
+│   ├── activity/
+│   ├── states/
+│   └── widgets/
+├── stores/
+├── lib/
+├── styles/
+└── assets/
+```
 
 ## Release packaging
 
@@ -22,9 +50,8 @@ zip -r module.zip manifest.json module.json icon.svg src widgets README.md
 
 The Marketplace backend expects both `manifest.json` and `module.json` to exist at the archive root.
 
-`module.json` currently points at the source route (`src/routes/social/+page.svelte`) and declares a future `bundle_entry` of `index.html`. That matches the current archive contents without pretending the bundle runtime is already generated.
+`module.json` now points at the componentized source route (`frontend/routes/social/+page.svelte`) and the assembled feed surface (`frontend/components/feed/FeedSurface.svelte`). The archive still declares `bundle_entry: index.html`, but the editable truth remains this GitHub repo and its structured source tree.
 
 ## Current runtime note
 
-This repository is ready for Marketplace submission and archive installation.
-The current Open WebUI checkout still needs the `ui-runtime` backend mounted for installed sandbox module bundles to execute in-app.
+This repository is ready for Marketplace submission and archive installation. The live Modula host already renders Social through the `social_host` renderer and backend Social service; this package repo now mirrors that architecture instead of lagging behind it.

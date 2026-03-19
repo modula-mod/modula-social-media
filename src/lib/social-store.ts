@@ -64,6 +64,12 @@ export interface TrendingTag {
   count: number;
 }
 
+export interface CreatePostOptions {
+  visibility?: Post['visibility'];
+  mediaUrl?: string;
+  mediaAlt?: string;
+}
+
 const mockUsers: SocialUser[] = [
   {
     id: 'user-1',
@@ -243,9 +249,19 @@ export async function loadFeed(filter?: FeedFilter): Promise<void> {
   feedLoading.set(false);
 }
 
-export function createPost(content: string): void {
+export function createPost(content: string, options: CreatePostOptions = {}): void {
   const trimmed = content.trim();
   if (!trimmed) return;
+  const media = options.mediaUrl
+    ? [
+        {
+          id: `media-${Date.now()}`,
+          type: 'image' as const,
+          url: options.mediaUrl,
+          altText: options.mediaAlt?.trim() || undefined
+        }
+      ]
+    : [];
   const nextPost: Post = {
     id: `post-${Date.now()}`,
     author: {
@@ -262,13 +278,13 @@ export function createPost(content: string): void {
       isFollowing: false
     },
     content: trimmed,
-    media: [],
+    media,
     likes: 0,
     comments: 0,
     shares: 0,
     reposts: 0,
     createdAt: new Date().toISOString(),
-    visibility: 'public',
+    visibility: options.visibility ?? 'public',
     isLiked: false,
     isReposted: false,
     isBookmarked: false,

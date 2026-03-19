@@ -3,8 +3,8 @@
   "slug": "social-media",
   "name": "Social Media",
   "subtitle": "Identity-native flagship social module for Modula",
-  "description": "Unified social feed module for Modula with a real feed, composer, comments, reactions, activity, widgets, and plugin extension points.",
-  "version": "1.1.0",
+  "description": "Unified social feed module for Modula with a real feed, composer, comments, reactions, activity, widgets, plugin extension points, and a componentized package structure.",
+  "version": "1.2.0",
   "type": "module",
   "entry": "module.json",
   "icon": "icon.svg",
@@ -20,7 +20,7 @@
     "issues": "https://github.com/modula-mod/modula-social-media/issues"
   },
   "release": {
-    "current": "1.1.0",
+    "current": "1.2.0",
     "channel": "stable"
   },
   "compatibility": {

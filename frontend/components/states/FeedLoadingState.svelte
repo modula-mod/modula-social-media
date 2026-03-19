@@ -1,0 +1,3 @@
+<div class="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-500 dark:border-white/10 dark:bg-slate-900 dark:text-white/60">
+  Loading social surface…
+</div>

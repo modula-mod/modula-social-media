@@ -1,5 +1,5 @@
 <script lang="ts">
-  import SocialFeedSurface from '../../src/components/SocialFeedSurface.svelte';
+  import FeedSurface from '../components/feed/FeedSurface.svelte';
 </script>
 
-<SocialFeedSurface />
+<FeedSurface />
