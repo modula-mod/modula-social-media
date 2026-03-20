@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+- Completed the package contract for relationship and notification flows by declaring follow actions, follow events, and follow activity workflows in the runtime metadata.
+- Aligned the release artifact metadata with the GitHub-first `v1.3.1` Marketplace update path.
+
 ## 1.3.0
 - Added identity-native follow relationships and notification graph support to the Social package contract.
 - Declared follow and notification capabilities, services, actions, events, and workflows for GitHub-first Marketplace releases.

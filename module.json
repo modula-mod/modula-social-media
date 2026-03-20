@@ -3,7 +3,7 @@
   "slug": "social-media",
   "name": "Social Media",
   "namespace": "modula.social",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "package_kind": "module",
   "class": "hybrid",
   "placements": [
@@ -292,9 +292,10 @@
   "services_required": [],
   "services_optional": [],
   "events_emitted": [
-    "social.feed.updated",
-    "social.post.created",
     "social.comment.created",
+    "social.feed.updated",
+    "social.follow.created",
+    "social.post.created",
     "social.reaction.created"
   ],
   "events_listened": [
@@ -303,12 +304,12 @@
   ],
   "actions_provided": [
     {
-      "id": "social.post.create",
-      "title": "Create Social Post",
-      "capability": "social.post.create",
+      "id": "social.comment.create",
+      "title": "Comment on Social Post",
+      "capability": "social.comment.create",
       "service": "social.posts.v1",
       "permissions_required": [
-        "post.create"
+        "comment.create"
       ]
     },
     {
@@ -321,12 +322,30 @@
       ]
     },
     {
-      "id": "social.comment.create",
-      "title": "Comment on Social Post",
-      "capability": "social.comment.create",
+      "id": "social.follow.create",
+      "title": "Follow Identity",
+      "capability": "social.follow.create",
+      "service": "social.relationships.v1",
+      "permissions_required": [
+        "follow.create"
+      ]
+    },
+    {
+      "id": "social.follow.remove",
+      "title": "Unfollow Identity",
+      "capability": "social.follow.create",
+      "service": "social.relationships.v1",
+      "permissions_required": [
+        "follow.create"
+      ]
+    },
+    {
+      "id": "social.post.create",
+      "title": "Create Social Post",
+      "capability": "social.post.create",
       "service": "social.posts.v1",
       "permissions_required": [
-        "comment.create"
+        "post.create"
       ]
     },
     {
@@ -369,18 +388,25 @@
   ],
   "workflows_provided": [
     {
+      "id": "social.comment.create.activity",
+      "title": "Create Comment and Record Activity",
+      "steps": [
+        "social.comment.create"
+      ]
+    },
+    {
+      "id": "social.follow.create.activity",
+      "title": "Follow Identity and Record Activity",
+      "steps": [
+        "social.follow.create"
+      ]
+    },
+    {
       "id": "social.post.create.notify",
       "title": "Create Post and Notify",
       "steps": [
         "social.post.create",
         "notifications.send.requested"
-      ]
-    },
-    {
-      "id": "social.comment.create.activity",
-      "title": "Create Comment and Record Activity",
-      "steps": [
-        "social.comment.create"
       ]
     },
     {
@@ -401,8 +427,13 @@
     "social.follow.remove"
   ],
   "workflows": [
+    "social.follow.create.activity",
     "social.post.create.notify",
-    "social.reaction.create.activity",
-    "social.follow.create.activity"
-  ]
+    "social.reaction.create.activity"
+  ],
+  "release": {
+    "current": "1.3.1"
+  },
+  "release_source": "https://github.com/modula-mod/modula-social-media/releases/download/v1.3.1/module.zip",
+  "source_repo_url": null
 }

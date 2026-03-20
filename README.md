@@ -2,7 +2,7 @@
 
 Flagship Social module for Modula.
 
-Current release line: `1.3.0`
+Current release line: `1.3.1`
 
 ## Contents
 
@@ -61,7 +61,7 @@ This repository is ready for Marketplace submission and archive installation. Th
 
 ## Relationship and Notification Graph
 
-`1.3.0` adds the first identity-native relationship graph to the Social contract:
+`1.3.1` carries the first complete identity-native relationship graph contract for Social:
 
 - follow / unfollow actions
 - followers / following reads
