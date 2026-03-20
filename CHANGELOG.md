@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0
+- Added identity-native follow relationships and notification graph support to the Social package contract.
+- Declared follow and notification capabilities, services, actions, events, and workflows for GitHub-first Marketplace releases.
+- Tightened the package contract around relationship-aware identity surfaces, follow state, and notification-driven Social activity.
+
 ## 1.2.0
 - Refactored the package repo into explicit `frontend/routes`, `frontend/components`, `frontend/stores`, `frontend/lib`, `frontend/styles`, `backend`, `widgets`, and `docs` areas.
 - Split the package feed surface into reusable layout, composer, feed, post, comment, reaction, activity, state, and widget components instead of keeping the legacy all-in-one source file.

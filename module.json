@@ -3,7 +3,7 @@
   "slug": "social-media",
   "name": "Social Media",
   "namespace": "modula.social",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "package_kind": "module",
   "class": "hybrid",
   "placements": [
@@ -132,15 +132,19 @@
     "allow-forms"
   ],
   "permissions": [
-    "profile.read",
-    "post.create",
     "comment.create",
+    "follow.create",
+    "notifications.read",
+    "post.create",
+    "profile.read",
     "reaction.create"
   ],
   "capabilities": [
     "feed.read",
-    "widget.render",
-    "search.index"
+    "follow.read",
+    "notifications.read",
+    "search.index",
+    "widget.render"
   ],
   "dependencies": {
     "required": [],
@@ -172,7 +176,11 @@
     "provider": "social-feed"
   },
   "events": [
-    "social.feed.updated"
+    "social.comment.created",
+    "social.feed.updated",
+    "social.follow.created",
+    "social.post.created",
+    "social.reaction.created"
   ],
   "compatibility": {
     "modula_core": ">=1.0.0",
@@ -194,17 +202,20 @@
     "component": "frontend/components/feed/FeedSurface.svelte"
   },
   "capabilities_provided": [
-    "social.feed.read",
-    "social.post.create",
-    "social.comment.create",
-    "social.reaction.create",
     "social.activity.read",
-    "social.profile.read",
     "social.board.widgets",
+    "social.comment.create",
+    "social.feed.card.actions",
+    "social.feed.read",
+    "social.follow.create",
+    "social.follow.read",
     "social.messages.read",
     "social.nav.secondary",
+    "social.notifications.read",
+    "social.post.create",
     "social.profile.media",
-    "social.feed.card.actions",
+    "social.profile.read",
+    "social.reaction.create",
     "social.settings.integrations"
   ],
   "capabilities_required": [],
@@ -246,7 +257,24 @@
       ],
       "methods": [
         "listActivity",
-        "listNotifications"
+        "listNotifications",
+        "countNotifications",
+        "markNotificationRead"
+      ]
+    },
+    {
+      "id": "social.relationships.v1",
+      "capability": "social.follow.read",
+      "version": "1.0.0",
+      "permissions_required": [
+        "profile.read"
+      ],
+      "methods": [
+        "getRelationship",
+        "listFollowers",
+        "listFollowing",
+        "follow",
+        "unfollow"
       ]
     },
     {
@@ -363,5 +391,18 @@
       ]
     }
   ],
-  "agent_roles": []
+  "agent_roles": [],
+  "actions": [
+    "social.post.create",
+    "social.comment.create",
+    "social.reaction.create",
+    "social.feed.refresh",
+    "social.follow.create",
+    "social.follow.remove"
+  ],
+  "workflows": [
+    "social.post.create.notify",
+    "social.reaction.create.activity",
+    "social.follow.create.activity"
+  ]
 }

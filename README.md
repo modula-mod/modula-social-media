@@ -2,6 +2,8 @@
 
 Flagship Social module for Modula.
 
+Current release line: `1.3.0`
+
 ## Contents
 
 - `manifest.json`: Marketplace submission manifest
@@ -11,6 +13,7 @@ Flagship Social module for Modula.
 - `frontend/stores/`: package-local store exports
 - `frontend/lib/`: route unions and helper utilities
 - `backend/`: install hooks, schemas, service, router, permissions, events, and repository contracts
+- `docs/relationships-and-notifications.md`: follow graph, notification graph, and public identity linkage
 - `src/components/SocialFeedSurface.svelte`: compatibility wrapper that now forwards to the structured `frontend/components/feed/FeedSurface.svelte`
 - `src/lib/social-store.ts`: package-local reference state for the componentized sandbox surface
 - `widgets/`: Social feed, post, and activity widget descriptors
@@ -55,3 +58,15 @@ The Marketplace backend expects both `manifest.json` and `module.json` to exist 
 ## Current runtime note
 
 This repository is ready for Marketplace submission and archive installation. The live Modula host already renders Social through the `social_host` renderer and backend Social service; this package repo now mirrors that architecture instead of lagging behind it.
+
+## Relationship and Notification Graph
+
+`1.3.0` adds the first identity-native relationship graph to the Social contract:
+
+- follow / unfollow actions
+- followers / following reads
+- notification reads and unread counts
+- public identity relationship state
+- activity and notification hooks for follows, comments, and reactions
+
+The authoritative contract lives in `module.json`, while the deeper behavior and data-shape guidance lives under `docs/`.
