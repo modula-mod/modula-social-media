@@ -23,7 +23,7 @@ Relationships are tied to Modula identities, not email addresses.
 This keeps Social aligned with:
 
 - public identity routes: `/identity/<handle>`
-- private workspace state: `/profile`
+- private workspace alias: `/profile -> /identity/<my-handle>`
 - future identity-aware feed ranking
 - notification delivery
 
@@ -35,7 +35,8 @@ Public identity pages can safely expose:
 - follower count
 - following count
 - compact follower / following previews
-- public social activity
+- visible social activity that respects post visibility
+- visible social posts rendered through the canonical identity route
 
 Public identity pages must not expose:
 
@@ -43,6 +44,7 @@ Public identity pages must not expose:
 - drafts
 - private module surfaces
 - credential email details
+- private or followers-only content to viewers who do not satisfy visibility rules
 
 ## Notification model
 
