@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { suggestedUsers, trendingTags, followUser } from '../../../src/lib/social-store';
+  import { followUser, loadFeed, setHashtagFilter, suggestedUsers, trendingTags } from '../../../src/lib/social-store';
+
+  function filterByTag(tag: string) {
+    setHashtagFilter(tag);
+    void loadFeed();
+  }
 </script>
 
 <section class="rounded-3xl border border-slate-200 bg-white p-5 dark:border-white/10 dark:bg-slate-900">
@@ -7,10 +12,14 @@
   <h2 class="mt-1 text-lg font-semibold text-slate-900 dark:text-white">Trending topics</h2>
   <div class="mt-4 space-y-3">
     {#each $trendingTags.slice(0, 5) as tag}
-      <div class="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-white/5">
+      <button
+        type="button"
+        on:click={() => filterByTag(tag.tag)}
+        class="w-full rounded-2xl bg-slate-50 px-4 py-3 text-left transition hover:bg-blue-50 dark:bg-white/5 dark:hover:bg-blue-500/10"
+      >
         <div class="font-medium text-slate-900 dark:text-white">#{tag.tag}</div>
         <div class="text-xs text-slate-500 dark:text-white/50">{tag.count.toLocaleString()} posts</div>
-      </div>
+      </button>
     {/each}
   </div>
 </section>

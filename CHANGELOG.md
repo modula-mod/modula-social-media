@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.1
+- Added emoji reaction dropdown support (`👍 ❤️ 😂 🔥 🚀 🎉`) with per-emoji post reaction counts and user-selected reaction state.
+- Replaced placeholder comments with a full inline comment flow (composer, list rendering, timestamping, and comment-like toggles).
+- Added hashtag and mention parsing for posts/comments, clickable hashtag chips, and hashtag-based feed filtering.
+- Extended the post composer with explicit tag input so tags and hashtags can be published together.
+- Updated package metadata (`manifest.json`, `module.json`, `package.json`) and release source pointers for GitHub-first Marketplace updates.
+
 ## 1.3.1
 - Completed the package contract for relationship and notification flows by declaring follow actions, follow events, and follow activity workflows in the runtime metadata.
 - Aligned the release artifact metadata with the GitHub-first `v1.3.1` Marketplace update path.

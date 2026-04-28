@@ -2,7 +2,7 @@
 
 Flagship Social module for Modula.
 
-Current release line: `1.3.1`
+Current release line: `1.4.1`
 
 ## Contents
 
@@ -61,12 +61,12 @@ This repository is ready for Marketplace submission and archive installation. Th
 
 ## Relationship and Notification Graph
 
-`1.3.1` carries the first complete identity-native relationship graph contract for Social:
+`1.4.1` adds richer feed interactions on top of the existing identity-native relationship graph contract:
 
-- follow / unfollow actions
-- followers / following reads
-- notification reads and unread counts
-- public identity relationship state
-- activity and notification hooks for follows, comments, and reactions
+- emoji reaction dropdowns with per-emoji counts
+- inline comment composing and comment list rendering
+- hashtag and mention parsing in posts and comments
+- clickable hashtag chips with feed filtering
+- explicit composer tags (`tag1, tag2`) merged with inline hashtags
 
 The authoritative contract lives in `module.json`, while the deeper behavior and data-shape guidance lives under `docs/`.

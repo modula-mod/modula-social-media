@@ -1,6 +1,22 @@
 import { writable, get } from 'svelte/store';
 
 export type FeedFilter = 'all' | 'following' | 'trending';
+export type ReactionType = 'like' | 'love' | 'laugh' | 'fire' | 'rocket' | 'celebrate';
+
+export interface ReactionOption {
+  type: ReactionType;
+  emoji: string;
+  label: string;
+}
+
+export const REACTION_OPTIONS: ReactionOption[] = [
+  { type: 'like', emoji: '👍', label: 'Like' },
+  { type: 'love', emoji: '❤️', label: 'Love' },
+  { type: 'laugh', emoji: '😂', label: 'Laugh' },
+  { type: 'fire', emoji: '🔥', label: 'Fire' },
+  { type: 'rocket', emoji: '🚀', label: 'Rocket' },
+  { type: 'celebrate', emoji: '🎉', label: 'Celebrate' }
+];
 
 export interface SocialUser {
   id: string;
@@ -40,6 +56,18 @@ export interface PostPoll {
   votedOption?: string;
 }
 
+export interface PostComment {
+  id: string;
+  author: SocialUser;
+  content: string;
+  createdAt: string;
+  likes: number;
+  isLiked: boolean;
+  tags: string[];
+  hashtags: string[];
+  mentions: string[];
+}
+
 export interface Post {
   id: string;
   author: SocialUser;
@@ -54,8 +82,12 @@ export interface Post {
   isLiked: boolean;
   isReposted: boolean;
   isBookmarked: boolean;
+  reactions: Record<ReactionType, number>;
+  userReaction: ReactionType | null;
+  commentList: PostComment[];
   poll?: PostPoll;
   tags: string[];
+  hashtags: string[];
   mentions: string[];
 }
 
@@ -68,6 +100,139 @@ export interface CreatePostOptions {
   visibility?: Post['visibility'];
   mediaUrl?: string;
   mediaAlt?: string;
+  tags?: string[];
+}
+
+const currentUser: SocialUser = {
+  id: 'creator-1',
+  username: 'modula-builder',
+  displayName: 'Modula Builder',
+  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=modula-builder',
+  bio: 'Shipping the first marketplace modules.',
+  verified: true,
+  followers: 0,
+  following: 0,
+  posts: 1,
+  createdAt: new Date().toISOString(),
+  isFollowing: false
+};
+
+function normalizeTag(value: string): string {
+  return value.trim().replace(/^#/, '').toLowerCase();
+}
+
+function unique(values: string[]): string[] {
+  return Array.from(new Set(values.filter((value) => value.trim().length > 0)));
+}
+
+function normalizeTags(values: string[]): string[] {
+  return unique(
+    values
+      .map((value) => normalizeTag(value))
+      .filter((value) => value.length > 0)
+  );
+}
+
+function extractHashtags(content: string): string[] {
+  return normalizeTags(Array.from(content.matchAll(/#([a-zA-Z0-9_]+)/g)).map((match) => match[1]));
+}
+
+function extractMentions(content: string): string[] {
+  return unique(Array.from(content.matchAll(/@([a-zA-Z0-9_]+)/g)).map((match) => match[1].toLowerCase()));
+}
+
+function createReactionCounts(seed: Partial<Record<ReactionType, number>> = {}): Record<ReactionType, number> {
+  return {
+    like: 0,
+    love: 0,
+    laugh: 0,
+    fire: 0,
+    rocket: 0,
+    celebrate: 0,
+    ...seed
+  };
+}
+
+function sumReactions(reactions: Record<ReactionType, number>): number {
+  return Object.values(reactions).reduce((total, count) => total + count, 0);
+}
+
+interface DraftComment extends Omit<PostComment, 'tags' | 'hashtags' | 'mentions'> {
+  tags?: string[];
+  hashtags?: string[];
+  mentions?: string[];
+}
+
+interface DraftPost extends Omit<Post, 'likes' | 'comments' | 'isLiked' | 'commentList' | 'tags' | 'hashtags' | 'reactions' | 'userReaction'> {
+  commentList?: DraftComment[];
+  tags?: string[];
+  hashtags?: string[];
+  reactions?: Partial<Record<ReactionType, number>>;
+  userReaction?: ReactionType | null;
+}
+
+function hydrateComment(comment: DraftComment): PostComment {
+  const hashtags = normalizeTags(comment.hashtags?.length ? comment.hashtags : extractHashtags(comment.content));
+  const mentions = unique(comment.mentions?.length ? comment.mentions.map((mention) => mention.replace(/^@/, '').toLowerCase()) : extractMentions(comment.content));
+  const tags = unique([...(comment.tags ?? []).map((tag) => normalizeTag(tag)).filter((tag) => tag.length > 0), ...hashtags]);
+
+  return {
+    ...comment,
+    tags,
+    hashtags,
+    mentions
+  };
+}
+
+function hydratePost(post: DraftPost): Post {
+  const commentList = (post.commentList ?? []).map(hydrateComment);
+  const hashtags = normalizeTags(post.hashtags?.length ? post.hashtags : extractHashtags(post.content));
+  const tags = unique([...(post.tags ?? []).map((tag) => normalizeTag(tag)).filter((tag) => tag.length > 0), ...hashtags]);
+  const reactions = createReactionCounts(post.reactions);
+  const userReaction = post.userReaction ?? null;
+
+  return {
+    ...post,
+    commentList,
+    comments: commentList.length,
+    reactions,
+    userReaction,
+    likes: sumReactions(reactions),
+    isLiked: userReaction !== null,
+    tags,
+    hashtags
+  };
+}
+
+function buildTrendingTags(posts: Post[]): TrendingTag[] {
+  const scores = new Map<string, number>();
+
+  for (const post of posts) {
+    for (const tag of unique([...post.tags, ...post.hashtags])) {
+      scores.set(tag, (scores.get(tag) ?? 0) + 3);
+    }
+
+    for (const comment of post.commentList) {
+      for (const tag of unique([...comment.tags, ...comment.hashtags])) {
+        scores.set(tag, (scores.get(tag) ?? 0) + 1);
+      }
+    }
+  }
+
+  const entries = Array.from(scores.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([tag, count]) => ({ tag, count }));
+
+  if (entries.length === 0) {
+    return [
+      { tag: 'modula', count: 1 },
+      { tag: 'social', count: 1 },
+      { tag: 'community', count: 1 }
+    ];
+  }
+
+  return entries;
 }
 
 const mockUsers: SocialUser[] = [
@@ -139,9 +304,28 @@ function generateMockPosts(): Post[] {
       reposts: 3,
       createdAt: new Date(now - 1000 * 60 * 30).toISOString(),
       visibility: 'public',
-      isLiked: false,
       isReposted: false,
       isBookmarked: false,
+      reactions: createReactionCounts({ like: 24, love: 8, laugh: 4, fire: 3, rocket: 2, celebrate: 1 }),
+      userReaction: null,
+      commentList: [
+        {
+          id: 'comment-1',
+          author: mockUsers[1],
+          content: 'Huge milestone. I want a native #modula board widget next.',
+          createdAt: new Date(now - 1000 * 60 * 18).toISOString(),
+          likes: 6,
+          isLiked: false
+        },
+        {
+          id: 'comment-2',
+          author: mockUsers[3],
+          content: 'Seconded. Also add hashtag filters in-feed. #product #social',
+          createdAt: new Date(now - 1000 * 60 * 12).toISOString(),
+          likes: 9,
+          isLiked: true
+        }
+      ],
       tags: ['modula', 'launch', 'tech'],
       mentions: []
     },
@@ -163,9 +347,28 @@ function generateMockPosts(): Post[] {
       reposts: 8,
       createdAt: new Date(now - 1000 * 60 * 60 * 2).toISOString(),
       visibility: 'public',
-      isLiked: true,
       isReposted: false,
       isBookmarked: true,
+      reactions: createReactionCounts({ like: 88, love: 31, laugh: 12, fire: 14, rocket: 7, celebrate: 4 }),
+      userReaction: 'love',
+      commentList: [
+        {
+          id: 'comment-3',
+          author: mockUsers[0],
+          content: 'The layout spacing is super clean. #design',
+          createdAt: new Date(now - 1000 * 60 * 75).toISOString(),
+          likes: 3,
+          isLiked: false
+        },
+        {
+          id: 'comment-4',
+          author: mockUsers[2],
+          content: 'Ship it 🚀. Would love @johndoe to review this.',
+          createdAt: new Date(now - 1000 * 60 * 62).toISOString(),
+          likes: 2,
+          isLiked: false
+        }
+      ],
       tags: ['design', 'ui', 'modula'],
       mentions: ['johndoe']
     },
@@ -180,9 +383,20 @@ function generateMockPosts(): Post[] {
       reposts: 10,
       createdAt: new Date(now - 1000 * 60 * 60 * 5).toISOString(),
       visibility: 'public',
-      isLiked: false,
       isReposted: false,
       isBookmarked: false,
+      reactions: createReactionCounts({ like: 41, love: 18, laugh: 11, fire: 10, rocket: 6, celebrate: 3 }),
+      userReaction: null,
+      commentList: [
+        {
+          id: 'comment-5',
+          author: mockUsers[3],
+          content: 'Data ownership all the way. #web3 #identity',
+          createdAt: new Date(now - 1000 * 60 * 255).toISOString(),
+          likes: 12,
+          isLiked: true
+        }
+      ],
       tags: ['crypto', 'web3', 'gm'],
       mentions: [],
       poll: {
@@ -210,43 +424,85 @@ function generateMockPosts(): Post[] {
       reposts: 28,
       createdAt: new Date(now - 1000 * 60 * 60 * 8).toISOString(),
       visibility: 'public',
-      isLiked: true,
       isReposted: true,
       isBookmarked: true,
+      reactions: createReactionCounts({ like: 120, love: 62, laugh: 11, fire: 22, rocket: 16, celebrate: 6 }),
+      userReaction: 'fire',
+      commentList: [
+        {
+          id: 'comment-6',
+          author: mockUsers[0],
+          content: 'Composable > monolithic has become obvious this year. #ai #modula',
+          createdAt: new Date(now - 1000 * 60 * 470).toISOString(),
+          likes: 17,
+          isLiked: false
+        },
+        {
+          id: 'comment-7',
+          author: mockUsers[1],
+          content: 'Agreed. Smaller surfaces win UX too. #product',
+          createdAt: new Date(now - 1000 * 60 * 455).toISOString(),
+          likes: 8,
+          isLiked: false
+        }
+      ],
       tags: ['ai', 'research', 'llm'],
       mentions: []
     }
-  ];
+  ].map(hydratePost);
 }
 
 export const feedPosts = writable<Post[]>([]);
 export const feedLoading = writable<boolean>(false);
 export const feedFilter = writable<FeedFilter>('all');
-export const trendingTags = writable<TrendingTag[]>([
-  { tag: 'modula', count: 1234 },
-  { tag: 'web3', count: 987 },
-  { tag: 'ai', count: 876 },
-  { tag: 'design', count: 654 },
-  { tag: 'crypto', count: 543 }
-]);
+export const selectedHashtag = writable<string | null>(null);
+export const trendingTags = writable<TrendingTag[]>(buildTrendingTags(generateMockPosts()));
 export const suggestedUsers = writable<SocialUser[]>(mockUsers.filter((user) => !user.isFollowing));
 
 export async function loadFeed(filter?: FeedFilter): Promise<void> {
   const nextFilter = filter ?? get(feedFilter);
+  const hashtag = get(selectedHashtag);
   feedFilter.set(nextFilter);
   feedLoading.set(true);
 
   await new Promise((resolve) => setTimeout(resolve, 220));
 
-  let posts = generateMockPosts();
+  const basePosts = generateMockPosts();
+  trendingTags.set(buildTrendingTags(basePosts));
+
+  let posts = [...basePosts];
   if (nextFilter === 'following') {
     posts = posts.filter((post) => post.author.isFollowing);
   } else if (nextFilter === 'trending') {
     posts = posts.sort((a, b) => b.likes + b.reposts - (a.likes + a.reposts));
   }
 
+  if (hashtag) {
+    posts = posts.filter((post) => {
+      if (post.tags.includes(hashtag) || post.hashtags.includes(hashtag)) {
+        return true;
+      }
+
+      return post.commentList.some((comment) => comment.tags.includes(hashtag) || comment.hashtags.includes(hashtag));
+    });
+  }
+
   feedPosts.set(posts);
   feedLoading.set(false);
+}
+
+export function setHashtagFilter(tag: string | null): void {
+  if (!tag) {
+    selectedHashtag.set(null);
+    return;
+  }
+
+  const normalized = normalizeTag(tag);
+  selectedHashtag.set(normalized.length > 0 ? normalized : null);
+}
+
+export function clearHashtagFilter(): void {
+  selectedHashtag.set(null);
 }
 
 export function createPost(content: string, options: CreatePostOptions = {}): void {
@@ -262,21 +518,13 @@ export function createPost(content: string, options: CreatePostOptions = {}): vo
         }
       ]
     : [];
+
+  const hashtags = extractHashtags(trimmed);
+  const tags = normalizeTags([...(options.tags ?? []), ...hashtags]);
+
   const nextPost: Post = {
     id: `post-${Date.now()}`,
-    author: {
-      id: 'creator-1',
-      username: 'modula-builder',
-      displayName: 'Modula Builder',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=modula-builder',
-      bio: 'Shipping the first marketplace modules.',
-      verified: true,
-      followers: 0,
-      following: 0,
-      posts: 1,
-      createdAt: new Date().toISOString(),
-      isFollowing: false
-    },
+    author: currentUser,
     content: trimmed,
     media,
     likes: 0,
@@ -288,25 +536,60 @@ export function createPost(content: string, options: CreatePostOptions = {}): vo
     isLiked: false,
     isReposted: false,
     isBookmarked: false,
-    tags: Array.from(trimmed.matchAll(/#(\w+)/g)).map((match) => match[1]),
-    mentions: Array.from(trimmed.matchAll(/@(\w+)/g)).map((match) => match[1])
+    reactions: createReactionCounts(),
+    userReaction: null,
+    commentList: [],
+    tags,
+    hashtags,
+    mentions: extractMentions(trimmed)
   };
 
-  feedPosts.update((posts) => [nextPost, ...posts]);
+  feedPosts.update((posts) => {
+    const nextPosts = [nextPost, ...posts];
+    trendingTags.set(buildTrendingTags(nextPosts));
+    return nextPosts;
+  });
+}
+
+export function reactToPost(postId: string, reaction: ReactionType): void {
+  feedPosts.update((posts) =>
+    posts.map((post) => {
+      if (post.id !== postId) {
+        return post;
+      }
+
+      const reactions = { ...createReactionCounts(post.reactions) };
+      const previous = post.userReaction;
+
+      if (previous === reaction) {
+        reactions[reaction] = Math.max(0, reactions[reaction] - 1);
+        return {
+          ...post,
+          reactions,
+          userReaction: null,
+          likes: sumReactions(reactions),
+          isLiked: false
+        };
+      }
+
+      if (previous) {
+        reactions[previous] = Math.max(0, reactions[previous] - 1);
+      }
+
+      reactions[reaction] += 1;
+      return {
+        ...post,
+        reactions,
+        userReaction: reaction,
+        likes: sumReactions(reactions),
+        isLiked: true
+      };
+    })
+  );
 }
 
 export function likePost(postId: string): void {
-  feedPosts.update((posts) =>
-    posts.map((post) =>
-      post.id === postId
-        ? {
-            ...post,
-            isLiked: !post.isLiked,
-            likes: post.likes + (post.isLiked ? -1 : 1)
-          }
-        : post
-    )
-  );
+  reactToPost(postId, 'like');
 }
 
 export function repostPost(postId: string): void {
@@ -364,6 +647,67 @@ export function followUser(userId: string): void {
           }
         : post
     )
+  );
+}
+
+export function addComment(postId: string, content: string): void {
+  const trimmed = content.trim();
+  if (!trimmed) return;
+
+  feedPosts.update((posts) => {
+    const nextPosts = posts.map((post) => {
+      if (post.id !== postId) {
+        return post;
+      }
+
+      const hashtags = extractHashtags(trimmed);
+      const comment: PostComment = {
+        id: `comment-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        author: currentUser,
+        content: trimmed,
+        createdAt: new Date().toISOString(),
+        likes: 0,
+        isLiked: false,
+        tags: normalizeTags(hashtags),
+        hashtags,
+        mentions: extractMentions(trimmed)
+      };
+
+      const commentList = [...post.commentList, comment];
+      return {
+        ...post,
+        commentList,
+        comments: commentList.length
+      };
+    });
+
+    trendingTags.set(buildTrendingTags(nextPosts));
+    return nextPosts;
+  });
+}
+
+export function toggleCommentLike(postId: string, commentId: string): void {
+  feedPosts.update((posts) =>
+    posts.map((post) => {
+      if (post.id !== postId) {
+        return post;
+      }
+
+      const commentList = post.commentList.map((comment) =>
+        comment.id === commentId
+          ? {
+              ...comment,
+              isLiked: !comment.isLiked,
+              likes: comment.likes + (comment.isLiked ? -1 : 1)
+            }
+          : comment
+      );
+
+      return {
+        ...post,
+        commentList
+      };
+    })
   );
 }
 

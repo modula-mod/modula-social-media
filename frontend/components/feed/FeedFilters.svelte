@@ -12,14 +12,11 @@
     <button
       type="button"
       on:click={() => onChange?.(filter)}
-      class="flex-1 rounded-xl px-3 py-2 text-sm font-medium capitalize transition"
-      class:bg-slate-900={value === filter}
-      class:text-white={value === filter}
-      class:bg-transparent={value !== filter}
-      class:text-slate-500={value !== filter}
-      class:dark:bg-white={value === filter}
-      class:dark:text-slate-950={value === filter}
-      class:dark:text-white/60={value !== filter}
+      class={`flex-1 rounded-xl px-3 py-2 text-sm font-medium capitalize transition ${
+        value === filter
+          ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950'
+          : 'bg-transparent text-slate-500 dark:text-white/60'
+      }`}
     >
       {filter === 'all' ? 'For you' : filter}
     </button>

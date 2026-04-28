@@ -5,6 +5,7 @@
   export let visibility: Post['visibility'] = 'public';
   export let mediaUrl = '';
   export let mediaAlt = '';
+  export let tagsInput = '';
   export let onSubmit: () => void;
 </script>
 
@@ -39,6 +40,17 @@
       <input bind:value={mediaUrl} type="url" placeholder="https://…" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-slate-950" />
     </label>
   </div>
+
+  <label class="mt-3 block">
+    <div class="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-white/45">Tags</div>
+    <input
+      bind:value={tagsInput}
+      type="text"
+      placeholder="modula, launch, #community"
+      class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-slate-950"
+    />
+    <div class="mt-1 text-[11px] text-slate-500 dark:text-white/45">Comma-separated tags; hashtags in the post body are included automatically.</div>
+  </label>
 
   {#if mediaUrl.trim()}
     <label class="mt-3 block">
