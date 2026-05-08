@@ -1,439 +1,106 @@
 {
   "id": "social-media",
+  "type": "module",
   "slug": "social-media",
   "name": "Social Media",
   "namespace": "modula.social",
-  "version": "1.4.1",
+  "version": "1.6.0",
   "package_kind": "module",
   "class": "hybrid",
-  "placements": [
-    "sidebar",
-    "standalone_page",
-    "board_widget"
-  ],
-  "runtime": "sandbox",
-  "runtime_renderer": "social_host",
-  "bundle_entry": "index.html",
-  "entry_points": {
-    "frontend": "index.html",
-    "backend": "backend/router.py",
-    "settings": "frontend/routes/settings/+page.svelte"
-  },
-  "route": "/social",
-  "routes": [
-    {
-      "path": "/social",
-      "kind": "surface",
-      "label": "Social"
-    },
-    {
-      "path": "/social/messages",
-      "kind": "surface",
-      "label": "Messages"
-    },
-    {
-      "path": "/social/explore",
-      "kind": "surface",
-      "label": "Explore"
-    },
-    {
-      "path": "/social/notifications",
-      "kind": "surface",
-      "label": "Notifications"
+  "runtime": {
+    "mode": "svelte_component",
+    "entry": "frontend/dist/modula-entry.js",
+    "component_export": "default",
+    "style": "frontend/dist/modula-entry.css",
+    "fallback": {
+      "mode": "iframe_index_html",
+      "entry": "index.html"
     }
-  ],
+  },
+  "entry_points": {
+    "frontend": "frontend/dist/modula-entry.js",
+    "backend": "backend/router.py"
+  },
+  "api": {
+    "namespace": "/api/modula/modules/social-media",
+    "backend": "backend/router.py"
+  },
+  "backend": {
+    "enabled": true,
+    "namespace": "/api/modula/modules/social-media",
+    "router": "backend/router.py",
+    "models": "backend/models.py",
+    "schemas": "backend/schemas.py",
+    "service": "backend/service.py",
+    "repository": "backend/repository.py",
+    "permissions": "backend/permissions.py",
+    "install": "backend/install.py",
+    "uninstall": "backend/uninstall.py",
+    "migrations": [
+      "backend/migrations/0001_init.sql"
+    ],
+    "health": "/api/modula/modules/social-media/health"
+  },
   "surfaces": [
     {
-      "type": "sidebar_page",
-      "id": "social-feed",
-      "title": "Feed",
-      "route": "/social"
+      "id": "feed",
+      "title": "Social Feed",
+      "type": "page",
+      "route": "/social",
+      "entry": "feed"
     },
     {
-      "type": "sidebar_page",
-      "id": "messages",
-      "title": "Messages",
-      "route": "/social/messages"
-    },
-    {
-      "type": "sidebar_page",
-      "id": "social-explore",
+      "id": "explore",
       "title": "Explore",
-      "route": "/social/explore"
+      "type": "page",
+      "route": "/social/explore",
+      "entry": "explore"
     },
     {
-      "type": "sidebar_page",
-      "id": "social-notifications",
-      "title": "Notifications",
-      "route": "/social/notifications"
-    },
-    {
-      "type": "standalone_page",
-      "id": "social-home",
-      "title": "Social",
-      "route": "/social"
-    },
-    {
-      "type": "standalone_page",
-      "id": "social-explore-home",
-      "title": "Explore",
-      "route": "/social/explore"
-    },
-    {
-      "type": "standalone_page",
-      "id": "social-notifications-home",
-      "title": "Notifications",
-      "route": "/social/notifications"
-    },
-    {
-      "type": "profile_tab",
-      "id": "social-profile",
-      "title": "Social",
-      "route": "/social"
+      "id": "profile",
+      "title": "Social Profile",
+      "type": "page",
+      "route": "/social/profile",
+      "entry": "profile"
     }
   ],
-  "extension_slots": [
-    {
-      "id": "social.nav.secondary",
-      "kind": "nav-item"
-    },
-    {
-      "id": "social.profile.media",
-      "kind": "media-surface"
-    },
-    {
-      "id": "social.board.widgets",
-      "kind": "widget-provider"
-    },
-    {
-      "id": "social.feed.card.actions",
-      "kind": "action-provider"
-    },
-    {
-      "id": "social.settings.integrations",
-      "kind": "settings-panel"
-    }
-  ],
-  "replaces": [
-    "social"
-  ],
+  "plugins": {
+    "supports": true,
+    "extension_points": [
+      "surfaces",
+      "actions",
+      "composer.attachments",
+      "feed.cards"
+    ]
+  },
   "launcher": {
     "name": "Social",
     "icon": "icon.svg",
-    "show_in_sidebar": true,
-    "show_in_dock": false
+    "show_in_sidebar": true
   },
-  "profile_tab": {
-    "title": "Social",
-    "runtime": "sandbox"
-  },
-  "sandbox_flags": [
-    "allow-scripts",
-    "allow-forms"
-  ],
   "permissions": [
-    "comment.create",
-    "follow.create",
-    "notifications.read",
     "post.create",
-    "profile.read",
-    "reaction.create"
+    "comment.create",
+    "reaction.create",
+    "profile.read"
   ],
   "capabilities": [
-    "feed.read",
-    "follow.read",
-    "notifications.read",
-    "search.index",
-    "widget.render"
+    "social.feed.read",
+    "social.explore.read",
+    "social.profile.read",
+    "social.post.create",
+    "social.comment.create",
+    "social.reaction.create"
   ],
-  "dependencies": {
-    "required": [],
-    "optional": [
-      "notifications",
-      "profile"
-    ]
+  "theme": {
+    "uses_modula_tokens": true
   },
-  "widgets": [
-    "social-feed",
-    "social-post",
-    "social-activity"
-  ],
-  "components": [
-    "layout/feed-shell",
-    "composer/feed-composer",
-    "feed/feed-filters",
-    "feed/feed-list",
-    "posts/post-card",
-    "comments/comment-composer",
-    "reactions/reaction-bar",
-    "activity/activity-rail",
-    "widgets/social-widget-preview"
-  ],
-  "settings": {
-    "entry": "frontend/routes/settings/+page.svelte"
+  "surface_style": {
+    "uses_modula_surface": true
   },
-  "search": {
-    "provider": "social-feed"
-  },
-  "events": [
-    "social.comment.created",
-    "social.feed.updated",
-    "social.follow.created",
-    "social.post.created",
-    "social.reaction.created"
-  ],
   "compatibility": {
     "modula_core": ">=1.0.0",
     "api_version": "1"
   },
-  "update_channel": "stable",
-  "hooks": {
-    "install": "backend/install.py",
-    "uninstall": "backend/uninstall.py"
-  },
-  "install_hooks": [
-    "backend/install.py"
-  ],
-  "uninstall_hooks": [
-    "backend/uninstall.py"
-  ],
-  "source": {
-    "route": "frontend/routes/social/+page.svelte",
-    "component": "frontend/components/feed/FeedSurface.svelte"
-  },
-  "capabilities_provided": [
-    "social.activity.read",
-    "social.board.widgets",
-    "social.comment.create",
-    "social.feed.card.actions",
-    "social.feed.read",
-    "social.follow.create",
-    "social.follow.read",
-    "social.messages.read",
-    "social.nav.secondary",
-    "social.notifications.read",
-    "social.post.create",
-    "social.profile.media",
-    "social.profile.read",
-    "social.reaction.create",
-    "social.settings.integrations"
-  ],
-  "capabilities_required": [],
-  "capabilities_optional": [],
-  "services_provided": [
-    {
-      "id": "social.feed.v1",
-      "capability": "social.feed.read",
-      "version": "1.0.0",
-      "permissions_required": [
-        "profile.read"
-      ],
-      "methods": [
-        "getFeed",
-        "getPost",
-        "listProfilePosts"
-      ]
-    },
-    {
-      "id": "social.posts.v1",
-      "capability": "social.post.create",
-      "version": "1.0.0",
-      "permissions_required": [
-        "post.create"
-      ],
-      "methods": [
-        "getPost",
-        "createPost",
-        "addComment",
-        "addReaction"
-      ]
-    },
-    {
-      "id": "social.activity.v1",
-      "capability": "social.activity.read",
-      "version": "1.0.0",
-      "permissions_required": [
-        "profile.read"
-      ],
-      "methods": [
-        "listActivity",
-        "listNotifications",
-        "countNotifications",
-        "markNotificationRead"
-      ]
-    },
-    {
-      "id": "social.relationships.v1",
-      "capability": "social.follow.read",
-      "version": "1.0.0",
-      "permissions_required": [
-        "profile.read"
-      ],
-      "methods": [
-        "getRelationship",
-        "listFollowers",
-        "listFollowing",
-        "follow",
-        "unfollow"
-      ]
-    },
-    {
-      "id": "social.messages.v1",
-      "capability": "social.messages.read",
-      "version": "1.0.0",
-      "permissions_required": [
-        "profile.read"
-      ],
-      "methods": [
-        "listThreads"
-      ]
-    }
-  ],
-  "services_required": [],
-  "services_optional": [],
-  "events_emitted": [
-    "social.comment.created",
-    "social.feed.updated",
-    "social.follow.created",
-    "social.post.created",
-    "social.reaction.created"
-  ],
-  "events_listened": [
-    "notifications.send.requested",
-    "board.widget.added"
-  ],
-  "actions_provided": [
-    {
-      "id": "social.comment.create",
-      "title": "Comment on Social Post",
-      "capability": "social.comment.create",
-      "service": "social.posts.v1",
-      "permissions_required": [
-        "comment.create"
-      ]
-    },
-    {
-      "id": "social.feed.refresh",
-      "title": "Refresh Social Feed",
-      "capability": "social.feed.read",
-      "service": "social.feed.v1",
-      "permissions_required": [
-        "profile.read"
-      ]
-    },
-    {
-      "id": "social.follow.create",
-      "title": "Follow Identity",
-      "capability": "social.follow.create",
-      "service": "social.relationships.v1",
-      "permissions_required": [
-        "follow.create"
-      ]
-    },
-    {
-      "id": "social.follow.remove",
-      "title": "Unfollow Identity",
-      "capability": "social.follow.create",
-      "service": "social.relationships.v1",
-      "permissions_required": [
-        "follow.create"
-      ]
-    },
-    {
-      "id": "social.post.create",
-      "title": "Create Social Post",
-      "capability": "social.post.create",
-      "service": "social.posts.v1",
-      "permissions_required": [
-        "post.create"
-      ]
-    },
-    {
-      "id": "social.reaction.create",
-      "title": "React to Social Post",
-      "capability": "social.reaction.create",
-      "service": "social.posts.v1",
-      "permissions_required": [
-        "reaction.create"
-      ]
-    }
-  ],
-  "triggers_emitted": [
-    {
-      "id": "social.post.created",
-      "title": "Social Post Created"
-    },
-    {
-      "id": "social.feed.updated",
-      "title": "Social Feed Updated"
-    },
-    {
-      "id": "social.comment.created",
-      "title": "Social Comment Created"
-    },
-    {
-      "id": "social.reaction.created",
-      "title": "Social Reaction Created"
-    }
-  ],
-  "jobs_provided": [
-    {
-      "id": "social.feed.sync",
-      "title": "Sync Social Feed",
-      "schedule_supported": true,
-      "permissions_required": [
-        "profile.read"
-      ]
-    }
-  ],
-  "workflows_provided": [
-    {
-      "id": "social.comment.create.activity",
-      "title": "Create Comment and Record Activity",
-      "steps": [
-        "social.comment.create"
-      ]
-    },
-    {
-      "id": "social.follow.create.activity",
-      "title": "Follow Identity and Record Activity",
-      "steps": [
-        "social.follow.create"
-      ]
-    },
-    {
-      "id": "social.post.create.notify",
-      "title": "Create Post and Notify",
-      "steps": [
-        "social.post.create",
-        "notifications.send.requested"
-      ]
-    },
-    {
-      "id": "social.reaction.create.activity",
-      "title": "Create Reaction and Record Activity",
-      "steps": [
-        "social.reaction.create"
-      ]
-    }
-  ],
-  "agent_roles": [],
-  "actions": [
-    "social.post.create",
-    "social.comment.create",
-    "social.reaction.create",
-    "social.feed.refresh",
-    "social.follow.create",
-    "social.follow.remove"
-  ],
-  "workflows": [
-    "social.follow.create.activity",
-    "social.post.create.notify",
-    "social.reaction.create.activity"
-  ],
-  "release": {
-    "current": "1.4.1"
-  },
-  "release_source": "https://github.com/modula-mod/modula-social-media/releases/download/v1.4.1/module.zip",
-  "source_repo_url": null
+  "update_channel": "stable"
 }

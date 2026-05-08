@@ -1,6 +1,6 @@
 import { writable, get } from 'svelte/store';
 
-export type FeedFilter = 'all' | 'following' | 'trending';
+export type FeedFilter = 'all' | 'following' | 'trending' | 'media' | 'bookmarked';
 export type ReactionType = 'like' | 'love' | 'laugh' | 'fire' | 'rocket' | 'celebrate';
 
 export interface ReactionOption {
@@ -235,11 +235,11 @@ function buildTrendingTags(posts: Post[]): TrendingTag[] {
   return entries;
 }
 
-const mockUsers: SocialUser[] = [
+const seedUsers: SocialUser[] = [
   {
     id: 'user-1',
-    username: 'johndoe',
-    displayName: 'John Doe',
+    username: 'builder1',
+    displayName: 'Builder One',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=john',
     bio: 'Software engineer and open source enthusiast.',
     verified: true,
@@ -251,8 +251,8 @@ const mockUsers: SocialUser[] = [
   },
   {
     id: 'user-2',
-    username: 'janedoe',
-    displayName: 'Jane Doe',
+    username: 'designer2',
+    displayName: 'Designer Two',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=jane',
     bio: 'Designer, creator, and coffee addict.',
     verified: true,
@@ -264,8 +264,8 @@ const mockUsers: SocialUser[] = [
   },
   {
     id: 'user-3',
-    username: 'cryptoking',
-    displayName: 'Crypto King',
+    username: 'maker3',
+    displayName: 'Maker Three',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=crypto',
     bio: 'DeFi maximalist and NFT collector.',
     verified: false,
@@ -277,8 +277,8 @@ const mockUsers: SocialUser[] = [
   },
   {
     id: 'user-4',
-    username: 'airesearcher',
-    displayName: 'AI Researcher',
+    username: 'research4',
+    displayName: 'Research Four',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ai',
     bio: 'Building the future of composable AI.',
     verified: true,
@@ -290,12 +290,12 @@ const mockUsers: SocialUser[] = [
   }
 ];
 
-function generateMockPosts(): Post[] {
+function generateSeedPosts(): Post[] {
   const now = Date.now();
   return [
     {
       id: 'post-1',
-      author: mockUsers[0],
+      author: seedUsers[0],
       content: 'Just shipped a new feature for Modula. The module system is now live. What modules would you like to see next?',
       media: [],
       likes: 42,
@@ -311,7 +311,7 @@ function generateMockPosts(): Post[] {
       commentList: [
         {
           id: 'comment-1',
-          author: mockUsers[1],
+          author: seedUsers[1],
           content: 'Huge milestone. I want a native #modula board widget next.',
           createdAt: new Date(now - 1000 * 60 * 18).toISOString(),
           likes: 6,
@@ -319,7 +319,7 @@ function generateMockPosts(): Post[] {
         },
         {
           id: 'comment-2',
-          author: mockUsers[3],
+          author: seedUsers[3],
           content: 'Seconded. Also add hashtag filters in-feed. #product #social',
           createdAt: new Date(now - 1000 * 60 * 12).toISOString(),
           likes: 9,
@@ -331,7 +331,7 @@ function generateMockPosts(): Post[] {
     },
     {
       id: 'post-2',
-      author: mockUsers[1],
+      author: seedUsers[1],
       content: 'Designing the new Social module UI. Here is a preview of the feed surface.',
       media: [
         {
@@ -354,7 +354,7 @@ function generateMockPosts(): Post[] {
       commentList: [
         {
           id: 'comment-3',
-          author: mockUsers[0],
+          author: seedUsers[0],
           content: 'The layout spacing is super clean. #design',
           createdAt: new Date(now - 1000 * 60 * 75).toISOString(),
           likes: 3,
@@ -362,7 +362,7 @@ function generateMockPosts(): Post[] {
         },
         {
           id: 'comment-4',
-          author: mockUsers[2],
+          author: seedUsers[2],
           content: 'Ship it 🚀. Would love @johndoe to review this.',
           createdAt: new Date(now - 1000 * 60 * 62).toISOString(),
           likes: 2,
@@ -374,7 +374,7 @@ function generateMockPosts(): Post[] {
     },
     {
       id: 'post-3',
-      author: mockUsers[2],
+      author: seedUsers[2],
       content: 'What is the best part of Web3 social? Vote below.',
       media: [],
       likes: 89,
@@ -390,7 +390,7 @@ function generateMockPosts(): Post[] {
       commentList: [
         {
           id: 'comment-5',
-          author: mockUsers[3],
+          author: seedUsers[3],
           content: 'Data ownership all the way. #web3 #identity',
           createdAt: new Date(now - 1000 * 60 * 255).toISOString(),
           likes: 12,
@@ -415,7 +415,7 @@ function generateMockPosts(): Post[] {
     },
     {
       id: 'post-4',
-      author: mockUsers[3],
+      author: seedUsers[3],
       content: 'Composability wins. Smaller specialized models plus modular surfaces beat monolithic products every time.',
       media: [],
       likes: 234,
@@ -431,7 +431,7 @@ function generateMockPosts(): Post[] {
       commentList: [
         {
           id: 'comment-6',
-          author: mockUsers[0],
+          author: seedUsers[0],
           content: 'Composable > monolithic has become obvious this year. #ai #modula',
           createdAt: new Date(now - 1000 * 60 * 470).toISOString(),
           likes: 17,
@@ -439,7 +439,7 @@ function generateMockPosts(): Post[] {
         },
         {
           id: 'comment-7',
-          author: mockUsers[1],
+          author: seedUsers[1],
           content: 'Agreed. Smaller surfaces win UX too. #product',
           createdAt: new Date(now - 1000 * 60 * 455).toISOString(),
           likes: 8,
@@ -452,12 +452,19 @@ function generateMockPosts(): Post[] {
   ].map(hydratePost);
 }
 
+// Seed fixtures are preview-only and intentionally disabled in default runtime.
+const ENABLE_SEED_FEED = false;
+
+function initialSeedPosts(): Post[] {
+  return ENABLE_SEED_FEED ? generateSeedPosts() : [];
+}
+
 export const feedPosts = writable<Post[]>([]);
 export const feedLoading = writable<boolean>(false);
 export const feedFilter = writable<FeedFilter>('all');
 export const selectedHashtag = writable<string | null>(null);
-export const trendingTags = writable<TrendingTag[]>(buildTrendingTags(generateMockPosts()));
-export const suggestedUsers = writable<SocialUser[]>(mockUsers.filter((user) => !user.isFollowing));
+export const trendingTags = writable<TrendingTag[]>(buildTrendingTags(initialSeedPosts()));
+export const suggestedUsers = writable<SocialUser[]>(ENABLE_SEED_FEED ? seedUsers.filter((user) => !user.isFollowing) : []);
 
 export async function loadFeed(filter?: FeedFilter): Promise<void> {
   const nextFilter = filter ?? get(feedFilter);
@@ -467,14 +474,18 @@ export async function loadFeed(filter?: FeedFilter): Promise<void> {
 
   await new Promise((resolve) => setTimeout(resolve, 220));
 
-  const basePosts = generateMockPosts();
+  const basePosts = initialSeedPosts();
   trendingTags.set(buildTrendingTags(basePosts));
 
   let posts = [...basePosts];
   if (nextFilter === 'following') {
     posts = posts.filter((post) => post.author.isFollowing);
   } else if (nextFilter === 'trending') {
-    posts = posts.sort((a, b) => b.likes + b.reposts - (a.likes + a.reposts));
+    posts = posts.sort((a, b) => b.likes + b.reposts + b.shares - (a.likes + a.reposts + a.shares));
+  } else if (nextFilter === 'media') {
+    posts = posts.filter((post) => post.media.length > 0);
+  } else if (nextFilter === 'bookmarked') {
+    posts = posts.filter((post) => post.isBookmarked);
   }
 
   if (hashtag) {
@@ -613,6 +624,19 @@ export function bookmarkPost(postId: string): void {
         ? {
             ...post,
             isBookmarked: !post.isBookmarked
+          }
+        : post
+    )
+  );
+}
+
+export function sharePost(postId: string): void {
+  feedPosts.update((posts) =>
+    posts.map((post) =>
+      post.id === postId
+        ? {
+            ...post,
+            shares: post.shares + 1
           }
         : post
     )

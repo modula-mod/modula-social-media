@@ -4,21 +4,27 @@
   export let value: FeedFilter = 'all';
   export let onChange: (value: FeedFilter) => void;
 
-  const filters: FeedFilter[] = ['all', 'following', 'trending'];
+  const filters: Array<{ id: FeedFilter; label: string }> = [
+    { id: 'all', label: 'For you' },
+    { id: 'following', label: 'Following' },
+    { id: 'trending', label: 'Trending' },
+    { id: 'media', label: 'Media' },
+    { id: 'bookmarked', label: 'Bookmarked' }
+  ];
 </script>
 
 <div class="flex rounded-2xl border border-slate-200 bg-white p-1 dark:border-white/10 dark:bg-slate-900">
   {#each filters as filter}
     <button
       type="button"
-      on:click={() => onChange?.(filter)}
+      on:click={() => onChange?.(filter.id)}
       class={`flex-1 rounded-xl px-3 py-2 text-sm font-medium capitalize transition ${
-        value === filter
+        value === filter.id
           ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950'
           : 'bg-transparent text-slate-500 dark:text-white/60'
       }`}
     >
-      {filter === 'all' ? 'For you' : filter}
+      {filter.label}
     </button>
   {/each}
 </div>

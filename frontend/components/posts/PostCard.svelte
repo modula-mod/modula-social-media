@@ -7,6 +7,7 @@
     loadFeed,
     reactToPost,
     repostPost,
+    sharePost,
     setHashtagFilter,
     toggleCommentLike,
     votePoll
@@ -55,6 +56,7 @@
         onLike={() => likePost(post.id)}
         onReact={handleReaction}
         onRepost={() => repostPost(post.id)}
+        onShare={() => sharePost(post.id)}
         onBookmark={() => bookmarkPost(post.id)}
       />
       <CommentComposer onSubmitComment={(content) => addComment(post.id, content)} />

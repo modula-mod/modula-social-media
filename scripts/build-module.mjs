@@ -1,2 +1,10 @@
 #!/usr/bin/env node
-console.log('build-module: bridge module uses the checked-in sandbox bundle and host renderer metadata.');
+import { execSync } from 'node:child_process';
+
+try {
+	execSync('npm --prefix frontend run build:modula', { stdio: 'inherit' });
+	console.log('build-module: generated frontend/dist/modula-entry.js and frontend/dist/modula-entry.css');
+} catch (error) {
+	console.error('build-module: failed to build native modula frontend assets.');
+	throw error;
+}

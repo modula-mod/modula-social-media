@@ -7,6 +7,20 @@
   export let mediaAlt = '';
   export let tagsInput = '';
   export let onSubmit: () => void;
+
+  const MAX_POST_LENGTH = 500;
+  const quickPrompts = [
+    'What did you ship today? #buildinpublic',
+    'Share one thing you learned this week. #learning',
+    'What should this module support next? #feedback'
+  ];
+
+  $: remainingChars = MAX_POST_LENGTH - body.length;
+
+  function applyPrompt(prompt: string) {
+    const nextBody = body.trim().length ? `${body}\n${prompt}` : prompt;
+    body = nextBody.slice(0, MAX_POST_LENGTH);
+  }
 </script>
 
 <section class="rounded-3xl border border-slate-200 bg-white p-5 dark:border-white/10 dark:bg-slate-900">
@@ -22,9 +36,22 @@
 
   <textarea
     bind:value={body}
+    maxlength={MAX_POST_LENGTH}
     placeholder="What should your identity publish next?"
     class="mt-4 h-32 w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm focus:outline-none dark:border-white/10 dark:bg-slate-950"
   />
+
+  <div class="mt-3 flex flex-wrap gap-2">
+    {#each quickPrompts as prompt}
+      <button
+        type="button"
+        on:click={() => applyPrompt(prompt)}
+        class="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-100 dark:border-white/10 dark:text-white/70 dark:hover:bg-white/10"
+      >
+        {prompt}
+      </button>
+    {/each}
+  </div>
 
   <div class="mt-4 grid gap-3 md:grid-cols-[180px_minmax(0,1fr)]">
     <label class="block">
@@ -61,10 +88,13 @@
 
   <div class="mt-4 flex items-center justify-between gap-3">
     <p class="text-xs text-slate-500 dark:text-white/45">This package source now models visibility and media in the composer instead of flattening everything to plain text.</p>
+    <span class={`text-xs font-medium ${remainingChars < 40 ? 'text-amber-500' : 'text-slate-500 dark:text-white/45'}`}>
+      {remainingChars} chars left
+    </span>
     <button
       type="button"
       on:click={() => onSubmit?.()}
-      disabled={!body.trim()}
+      disabled={!body.trim() || remainingChars < 0}
       class="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:opacity-50 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
     >
       Publish

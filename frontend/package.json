@@ -1,0 +1,20 @@
+{
+  "name": "@modula/social-media-frontend",
+  "version": "1.6.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "build:modula": "vite build -c vite.config.modula.ts",
+    "dev": "vite dev --host 0.0.0.0"
+  },
+  "dependencies": {
+    "@sveltejs/vite-plugin-svelte": "latest",
+    "svelte": "latest",
+    "vite": "latest",
+    "typescript": "latest"
+  },
+  "devDependencies": {
+    "@tsconfig/svelte": "latest"
+  }
+}

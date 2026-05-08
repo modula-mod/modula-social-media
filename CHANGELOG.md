@@ -1,5 +1,11 @@
 # Changelog
 
+## Next
+- Added two new feed filters: `media` and `bookmarked`, plus improved trending ranking to include shares.
+- Added explicit post sharing action in the reaction bar with live share-count updates.
+- Enhanced composer UX with quick prompt chips and a live character counter.
+- Extended metadata contract with `share.create` permission and `social.post.shared` event/action declarations.
+
 ## 1.4.1
 - Added emoji reaction dropdown support (`👍 ❤️ 😂 🔥 🚀 🎉`) with per-emoji post reaction counts and user-selected reaction state.
 - Replaced placeholder comments with a full inline comment flow (composer, list rendering, timestamping, and comment-like toggles).

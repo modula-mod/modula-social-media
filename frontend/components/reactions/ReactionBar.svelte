@@ -5,6 +5,7 @@
   export let onLike: () => void;
   export let onReact: (reaction: ReactionType) => void;
   export let onRepost: () => void;
+  export let onShare: () => void;
   export let onBookmark: () => void;
 
   let pickerOpen = false;
@@ -73,6 +74,10 @@
   </div>
   <button type="button" on:click={() => onBookmark?.()} class="flex items-center gap-1.5 hover:text-blue-500" class:text-blue-500={post.isBookmarked}>
     <span class="rounded-full p-2 hover:bg-blue-50 dark:hover:bg-blue-500/10">⌁</span>
+  </button>
+  <button type="button" on:click={() => onShare?.()} class="flex items-center gap-1.5 hover:text-indigo-500">
+    <span class="rounded-full p-2 hover:bg-indigo-50 dark:hover:bg-indigo-500/10">↗</span>
+    <span class="text-xs">{post.shares}</span>
   </button>
 </div>
 
