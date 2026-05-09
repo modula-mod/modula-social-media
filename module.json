@@ -4,7 +4,7 @@
   "slug": "social-media",
   "name": "Social Media",
   "namespace": "modula.social",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "package_kind": "module",
   "class": "hybrid",
   "runtime": {
@@ -62,6 +62,14 @@
       "type": "page",
       "route": "/social/profile",
       "entry": "profile"
+    },
+    {
+      "id": "reels",
+      "title": "Reels",
+      "type": "page",
+      "route": "/social/reels",
+      "entry": "reels",
+      "plugin_surface": true
     }
   ],
   "plugins": {
@@ -79,18 +87,24 @@
     "show_in_sidebar": true
   },
   "permissions": [
-    "post.create",
-    "comment.create",
-    "reaction.create",
-    "profile.read"
+    "social.feed.read",
+    "social.post.create",
+    "social.comment.create",
+    "social.reaction.create",
+    "social.explore.read",
+    "social.profile.extend",
+    "social.widget.read",
+    "social.notification.emit"
   ],
   "capabilities": [
     "social.feed.read",
-    "social.explore.read",
-    "social.profile.read",
     "social.post.create",
     "social.comment.create",
-    "social.reaction.create"
+    "social.reaction.create",
+    "social.explore.read",
+    "social.profile.extend",
+    "social.widget.read",
+    "social.notification.emit"
   ],
   "theme": {
     "uses_modula_tokens": true
@@ -102,5 +116,98 @@
     "modula_core": ">=1.0.0",
     "api_version": "1"
   },
-  "update_channel": "stable"
+  "update_channel": "stable",
+  "functions": [
+    {
+      "id": "social.create_post",
+      "title": "Create post",
+      "permission": "social.post.create"
+    },
+    {
+      "id": "social.list_feed",
+      "title": "List feed",
+      "permission": "social.feed.read"
+    },
+    {
+      "id": "social.react_to_post",
+      "title": "React to post",
+      "permission": "social.reaction.create"
+    },
+    {
+      "id": "social.comment_on_post",
+      "title": "Comment on post",
+      "permission": "social.comment.create"
+    },
+    {
+      "id": "social.search_posts",
+      "title": "Search posts",
+      "permission": "social.explore.read"
+    },
+    {
+      "id": "social.get_profile_activity",
+      "title": "Get profile activity",
+      "permission": "social.profile.extend"
+    }
+  ],
+  "widgets": [
+    {
+      "id": "social-feed-widget",
+      "title": "Social Feed Widget",
+      "surface": "board"
+    },
+    {
+      "id": "social-stats-widget",
+      "title": "Social Stats Widget",
+      "surface": "board"
+    },
+    {
+      "id": "recent-comments-widget",
+      "title": "Recent Comments Widget",
+      "surface": "board"
+    },
+    {
+      "id": "trending-posts-widget",
+      "title": "Trending Posts Widget",
+      "surface": "explore"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "social.comment.created",
+      "title": "Comment created",
+      "default_enabled": true
+    },
+    {
+      "id": "social.reaction.created",
+      "title": "Reaction created",
+      "default_enabled": true
+    },
+    {
+      "id": "social.post.created",
+      "title": "Post created",
+      "default_enabled": true
+    }
+  ],
+  "events": [
+    {
+      "id": "social.post.created",
+      "direction": "emitted"
+    },
+    {
+      "id": "social.comment.created",
+      "direction": "emitted"
+    },
+    {
+      "id": "social.reaction.created",
+      "direction": "emitted"
+    },
+    {
+      "id": "social.search.requested",
+      "direction": "accepted"
+    }
+  ],
+  "release": {
+    "current": "1.6.1",
+    "channel": "stable"
+  }
 }

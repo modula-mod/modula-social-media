@@ -1,16 +1,17 @@
 """Permission contract for the Modula Social module."""
 
 READ_PERMISSIONS = {
-    "profile.read",
-    "notifications.read",
+    "social.feed.read",
+    "social.explore.read",
+    "social.profile.extend",
+    "social.widget.read",
 }
 
 WRITE_PERMISSIONS = {
-    "post.create",
-    "comment.create",
-    "reaction.create",
-    "follow.create",
-    "share.create",
+    "social.post.create",
+    "social.comment.create",
+    "social.reaction.create",
+    "social.notification.emit",
 }
 
 REQUIRED_PERMISSIONS = tuple(sorted(READ_PERMISSIONS | WRITE_PERMISSIONS))

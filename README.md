@@ -70,3 +70,9 @@ This repository is ready for Marketplace submission and archive installation. Th
 - explicit composer tags (`tag1, tag2`) merged with inline hashtags
 
 The authoritative contract lives in `module.json`, while the deeper behavior and data-shape guidance lives under `docs/`.
+
+## Social 1.6.1 runtime proof
+
+Social 1.6.1 is the immutable advanced runtime release. It adds visible advanced composer controls, reaction bar counts, comments drawer behavior, share/bookmark actions, profile extension proof, reels compatibility, and module metadata panels for widgets, functions, permissions, notifications, and events.
+
+Do not overwrite an existing release tag if runtime contents are wrong. Bump the version, rebuild, pack, validate, release a new `module.zip`, then install/update from the new GitHub release asset.

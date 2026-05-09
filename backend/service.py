@@ -8,9 +8,10 @@ from __future__ import annotations
 
 from .events import EVENTS_EMITTED
 from .permissions import REQUIRED_PERMISSIONS, validate_declared_permissions
+from .contracts import contract_payload
 
 MODULE_ID = "social-media"
-MODULE_VERSION = "1.6.0"
+MODULE_VERSION = "1.6.1"
 CANONICAL_API_PREFIX = "/api/modula/modules/social-media"
 BACKEND_CONTRACT_VERSION = "2026-05-06"
 
@@ -25,6 +26,10 @@ def module_health() -> dict:
         "events_emitted": list(EVENTS_EMITTED),
         "required_permissions": list(REQUIRED_PERMISSIONS),
     }
+
+
+def module_contracts() -> dict:
+    return contract_payload(MODULE_ID, MODULE_VERSION)
 
 
 def validate_manifest_permissions(manifest: dict) -> dict:

@@ -85,3 +85,38 @@ export type SocialProfileMePayload = {
 	follower_count: number;
 	following_count: number;
 };
+
+export type SocialWidgetContract = {
+	id: string;
+	title: string;
+	description?: string;
+	surface?: string;
+};
+
+export type SocialFunctionContract = {
+	id: string;
+	title: string;
+	permission: string;
+};
+
+export type SocialPermissionContract = {
+	id: string;
+	description?: string;
+	risk: 'low' | 'medium' | 'high' | string;
+};
+
+export type SocialNotificationContract = {
+	id: string;
+	title: string;
+	default_enabled: boolean;
+};
+
+export type SocialContractPayload = {
+	module_id: string;
+	version: string;
+	widgets: SocialWidgetContract[];
+	functions: SocialFunctionContract[];
+	permissions: SocialPermissionContract[];
+	notifications: SocialNotificationContract[];
+	events: Array<{ id: string; direction: 'emitted' | 'accepted' | string }>;
+};

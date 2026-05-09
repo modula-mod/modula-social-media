@@ -1,6 +1,7 @@
 import type {
 	ModulaContext,
 	SocialCommentsPayload,
+	SocialContractPayload,
 	SocialExplorePayload,
 	SocialFeedPayload,
 	SocialMutationPayload,
@@ -93,4 +94,8 @@ export function loadExplore(apiBase: string, limit = 10) {
 
 export function loadMyProfile(apiBase: string) {
 	return request<SocialProfileMePayload>(apiBase, '/profile/me');
+}
+
+export function loadModuleContract(apiBase: string) {
+	return request<SocialContractPayload>(apiBase, '/contracts');
 }
