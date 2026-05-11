@@ -11,7 +11,7 @@ from .permissions import REQUIRED_PERMISSIONS, validate_declared_permissions
 from .contracts import contract_payload
 
 MODULE_ID = "social-media"
-MODULE_VERSION = "1.6.1"
+MODULE_VERSION = "1.6.2"
 CANONICAL_API_PREFIX = "/api/modula/modules/social-media"
 BACKEND_CONTRACT_VERSION = "2026-05-06"
 

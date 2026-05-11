@@ -3,15 +3,16 @@
 READ_PERMISSIONS = {
     "social.feed.read",
     "social.explore.read",
-    "social.profile.extend",
-    "social.widget.read",
+    "social.comment.read",
+    "social.profile.attach",
+    "social.widgets.render",
 }
 
 WRITE_PERMISSIONS = {
     "social.post.create",
+    "social.post.react",
     "social.comment.create",
-    "social.reaction.create",
-    "social.notification.emit",
+    "social.notifications.emit",
 }
 
 REQUIRED_PERMISSIONS = tuple(sorted(READ_PERMISSIONS | WRITE_PERMISSIONS))

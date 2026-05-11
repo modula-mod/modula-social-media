@@ -17,6 +17,12 @@ export type ModulaContext = {
 		packageKind?: string | null;
 		parentModuleId?: string | null;
 	} | null;
+	userContext?: {
+		id?: string | null;
+		name?: string | null;
+		email?: string | null;
+		role?: string | null;
+	} | null;
 };
 
 export type SocialProfile = {

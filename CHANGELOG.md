@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.2
+- Reworked the native Social runtime UI to inherit Modula shell surface, text, border, and accent tokens.
+- Added a stronger shell-aligned header, composer, discovery panels, post cards, reaction bar, comment panel, and contract rail.
+- Normalized widget/function/permission/notification contract IDs for Marketplace, Settings Modules, Board, and future module templates.
+- Added richer Board widget metadata including size, entry, permissions, data source, and refresh policy.
+
 ## Next
 - Added two new feed filters: `media` and `bookmarked`, plus improved trending ranking to include shares.
 - Added explicit post sharing action in the reaction bar with live share-count updates.
